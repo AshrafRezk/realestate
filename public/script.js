@@ -1066,13 +1066,12 @@ document.addEventListener('DOMContentLoaded', function () {
 // --- END: Desktop Switch Logic ---
 
 // --- BEGIN: Feature Progress Animation ---
-document.addEventListener('DOMContentLoaded', () => {
+function animateFeatureProgress() {
   const fills = document.querySelectorAll('.progress-fill');
   const nums = document.querySelectorAll('.progress-num');
 
   fills.forEach(fill => {
     const target = parseInt(fill.dataset.target, 10) || 0;
-    // trigger width animation after slight delay
     setTimeout(() => {
       fill.style.width = `${target}%`;
     }, 500);
@@ -1091,5 +1090,95 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     step();
   });
+}
+
+// --- BEGIN: Feature Cards & Localization ---
+document.addEventListener('DOMContentLoaded', () => {
+  const translations = {
+    en: {
+      toggle: 'عربي',
+      features: [
+        {
+          icon: 'bar-chart-2',
+          title: 'Streamlined Operations',
+          description: 'Automate property management, lead tracking, and deal processing with our integrated Salesforce solutions.',
+          percentage: 35
+        },
+        {
+          icon: 'handshake',
+          title: 'Enhanced Client Relationships',
+          description: 'Build stronger connections with clients through personalized communication and efficient service delivery.',
+          percentage: 45
+        },
+        {
+          icon: 'trending-up',
+          title: 'Data-Driven Insights',
+          description: 'Make informed decisions with real-time analytics and comprehensive reporting tools.',
+          percentage: 50
+        }
+      ]
+    },
+    ar: {
+      toggle: 'English',
+      features: [
+        {
+          icon: 'bar-chart-2',
+          title: 'عمليات سلسة',
+          description: 'قم بأتمتة إدارة العقارات وتتبع العملاء وإتمام الصفقات من خلال حلولنا المتكاملة من Salesforce.',
+          percentage: 35
+        },
+        {
+          icon: 'handshake',
+          title: 'علاقات عملاء أفضل',
+          description: 'ابنِ علاقات أقوى مع العملاء من خلال التواصل المخصص وتقديم الخدمة بكفاءة.',
+          percentage: 45
+        },
+        {
+          icon: 'trending-up',
+          title: 'رؤى قائمة على البيانات',
+          description: 'اتخذ قرارات مبنية على بيانات فورية وتقارير شاملة.',
+          percentage: 50
+        }
+      ]
+    }
+  };
+
+  const featuresContainer = document.getElementById('features');
+  const langToggle = document.getElementById('langToggle');
+  let currentLang = 'en';
+
+  function createFeatureCard({ icon, title, description, percentage }) {
+    const card = document.createElement('div');
+    card.className = 'feature-card';
+    card.innerHTML = `
+      <div class="feature-icon"><i data-lucide="${icon}" aria-label="${title}"></i></div>
+      <h3>${title}</h3>
+      <p>${description}</p>
+      <div class="progress-area">
+        <div class="progress"><div class="progress-fill" data-target="${percentage}"></div></div>
+        <span class="progress-num" data-target="${percentage}">0%</span>
+      </div>
+    `;
+    return card;
+  }
+
+  function renderFeatures() {
+    featuresContainer.innerHTML = '';
+    translations[currentLang].features.forEach(f => {
+      featuresContainer.appendChild(createFeatureCard(f));
+    });
+    lucide.createIcons();
+    animateFeatureProgress();
+  }
+
+  langToggle.addEventListener('click', () => {
+    currentLang = currentLang === 'en' ? 'ar' : 'en';
+    langToggle.textContent = translations[currentLang].toggle;
+    renderFeatures();
+  });
+
+  langToggle.textContent = translations[currentLang].toggle;
+  renderFeatures();
 });
+// --- END: Feature Cards & Localization ---
 // --- END: Feature Progress Animation ---
