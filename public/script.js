@@ -1027,3 +1027,40 @@ document.addEventListener('DOMContentLoaded', function () {
   resultsContainer.classList.add('fade-anim');
 });
 // --- END: Real Estate Results Logic ---
+
+// --- BEGIN: Desktop Switch Logic ---
+document.addEventListener('DOMContentLoaded', function () {
+  const metaViewport = document.querySelector('meta[name="viewport"]');
+  const modalEl = document.getElementById('desktopPromptModal');
+  const minDesktopWidth = 992; // threshold larger than typical tablet
+
+  function setMobileViewport() {
+    if (metaViewport) {
+      metaViewport.setAttribute('content', 'width=768, initial-scale=1.0, user-scalable=yes');
+    }
+  }
+
+  function setDesktopViewport() {
+    if (metaViewport) {
+      metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, user-scalable=yes');
+    }
+  }
+
+  if (window.innerWidth > minDesktopWidth) {
+    setMobileViewport();
+    setTimeout(() => {
+      const modal = new bootstrap.Modal(modalEl);
+      modal.show();
+
+      document.getElementById('switchDesktopBtn').addEventListener('click', () => {
+        setDesktopViewport();
+        modal.hide();
+      });
+
+      document.getElementById('stayMobileBtn').addEventListener('click', () => {
+        modal.hide();
+      });
+    }, 20000);
+  }
+});
+// --- END: Desktop Switch Logic ---
