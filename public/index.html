@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5.0, minimum-scale=1.0" />
+    <title>Cloudastick Systems - Real Estate Salesforce Solutions</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Toastify CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <!-- Custom CSS -->
+    <link href="styles.css" rel="stylesheet">
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #181818;
+            --accent-color: #F6D984;
+            --text-color: #fff;
+            --text-secondary: #ccc;
+            --card-bg: #232323;
+            --light-bg: #181818;
+            --navbar-bg: #181818;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--text-color);
+            overflow-x: hidden;
+            background: #000;
+        }
+        
+        .hero-section {
+            position: relative;
+            height: 100vh;
+            background: linear-gradient(135deg, var(--primary-color), #1a1a1a);
+            overflow: hidden;
+        }
+        
+        .hero-section canvas {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: left;
+            padding: 0 20px;
+            max-width: 600px;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, var(--accent-color), #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: var(--accent-color);
+            color: var(--primary-color);
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 1.1rem;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(246, 217, 132, 0.3);
+            color: var(--primary-color);
+        }
+        
+        .features-section {
+            padding: 100px 0;
+            background: var(--light-bg);
+        }
+        
+        .feature-card {
+            background: var(--card-bg);
+            color: var(--text-color);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 50px;
+            text-align: center;
+            color: var(--accent-color);
+        }
+        
+        .testimonial-section {
+            padding: 100px 0;
+            background: var(--card-bg);
+            color: var(--text-color);
+        }
+        
+        .testimonial-card {
+            background: #181818;
+            color: var(--text-secondary);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .contact-section {
+            padding: 100px 0;
+            background: var(--card-bg);
+            color: var(--text-color);
+        }
+        
+        .search-form {
+            background: #232323 !important;
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-header {
+            margin-bottom: 20px;
+        }
+        
+        .salesforce-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .salesforce-badge img {
+            height: 20px;
+            width: auto;
+        }
+        
+        .salesforce-badge span {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .search-fields {
+            margin-bottom: 20px;
+        }
+        
+        .search-field {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        
+        .search-field .material-icons {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .search-field textarea.form-control {
+            padding-top: 15px;
+            min-height: 120px;
+        }
+        
+        .search-field .form-control {
+            padding-left: 45px;
+            background: #181818;
+            border: 1px solid #232323;
+            color: var(--text-color);
+            border-radius: 12px;
+            height: 50px;
+        }
+        
+        .search-field .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .search-field .form-control:focus {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(246, 217, 132, 0.2);
+        }
+        
+        .search-footer {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .search-stats {
+            display: flex;
+            justify-content: space-between;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+        
+        .search-stats span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .search-stats .material-icons {
+            font-size: 16px;
+        }
+        
+        .btn-primary {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: var(--accent-color) !important;
+            color: #181818 !important;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background: #e5c97a !important;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(246, 217, 132, 0.3);
+        }
+        
+        .btn-primary .material-icons {
+            font-size: 20px;
+        }
+
+        .building-details-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transform: scale(0.8);
+            animation: modalAppear 0.5s forwards;
+        }
+
+        .building-details-modal.closing {
+            animation: modalDisappear 0.5s forwards;
+        }
+
+        .building-details-modal .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform-origin: center;
+            animation: contentUnfold 0.5s forwards;
+            position: relative;
+        }
+
+        .building-details-modal.closing .modal-content {
+            animation: contentFold 0.5s forwards;
+        }
+
+        .building-details-modal h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .building-details-modal .unit-details {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .building-details-modal .unit-detail {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: var(--light-bg);
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .building-details-modal .unit-detail:hover {
+            transform: translateX(5px);
+        }
+
+        .building-details-modal .material-icons {
+            color: var(--accent-color);
+            font-size: 20px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--primary-color);
+            padding: 5px;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(0, 0, 0, 0.1);
+            transform: rotate(90deg);
+        }
+
+        .modal-close .material-icons {
+            font-size: 24px;
+        }
+
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes modalDisappear {
+            from {
+                opacity: 1;
+                transform: scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+        }
+
+        @keyframes contentUnfold {
+            from {
+                transform: scale(0.5) rotate(-5deg);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1) rotate(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes contentFold {
+            from {
+                transform: scale(1) rotate(0);
+                opacity: 1;
+            }
+            to {
+                transform: scale(0.5) rotate(5deg);
+                opacity: 0;
+            }
+        }
+
+        .search-section {
+            padding: 100px 0;
+            background: #181818;
+            color: var(--text-color);
+        }
+
+        .search-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-tab {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-tab.active {
+            background: var(--accent-color);
+            color: var(--primary-color);
+            border-color: var(--accent-color);
+        }
+
+        .scene-container {
+            position: relative;
+            height: 100vh;
+            width: 100%;
+        }
+
+        .navbar {
+            background-color: var(--navbar-bg) !important;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            color: var(--accent-color) !important;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--accent-color) !important;
+            font-weight: 500;
+            padding: 8px 15px;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #fff !important;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .hero-section canvas {
+                width: 100%;
+                height: 50%;
+                top: auto;
+                bottom: 0;
+            }
+
+            .hero-content {
+                text-align: center;
+                padding: 40px 20px;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Properties Section */
+        #results {
+            background: #181818 !important;
+            border-radius: 16px;
+            padding: 24px 0 32px 0 !important;
+            margin-bottom: 48px;
+        }
+        #results h2 {
+            color: var(--accent-color) !important;
+        }
+        #resultsContainer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 18px !important;
+            margin: 0 auto;
+            max-width: 1200px;
+        }
+        #resultsContainer .card, #resultsContainer .gallery-item {
+            background: #232323 !important;
+            color: var(--text-color);
+            border: none;
+        }
+        /* Misc */
+        .highlight {
+            color: var(--accent-color) !important;
+        }
+        .text-gray-400 {
+            color: var(--text-secondary) !important;
+        }
+        .search-section label, .search-section input, .search-section select {
+            color: var(--text-color) !important;
+        }
+        .search-section input::placeholder {
+            color: #aaa !important;
+        }
+        .search-section .form-control, .search-section .form-select {
+            background: #181818 !important;
+            color: var(--text-color) !important;
+        }
+        .search-section .form-control:focus, .search-section .form-select:focus {
+            border-color: var(--accent-color) !important;
+        }
+        .results-section, #results, #resultsContainer, .gallery-item, .card-lux {
+            font-family: 'Montserrat', Arial, sans-serif !important;
+        }
+        .gallery-item.card-lux {
+            font-size: 1rem !important;
+            padding: 18px 12px !important;
+            margin: 0 !important;
+            min-width: 300px;
+            max-width: 340px;
+            text-align: center;
+            line-height: 1.5;
+        }
+        .gallery-item.card-lux h3 {
+            font-size: 1.15rem !important;
+            margin-bottom: 0.5em;
+        }
+        .gallery-item.card-lux p,
+        .gallery-item.card-lux span {
+            font-size: 0.98rem !important;
+        }
+        .search-section, #propertySearchForm {
+            padding-top: 32px !important;
+            padding-bottom: 32px !important;
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+        }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="#">CLOUDASTICK</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"><span class="toggler-middle"></span></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#results">Properties</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#contact">Contact</a>
+            </li>
+          </ul>
+          <a href="#propertySearchForm" class="btn" style="background-color: #F6D984; color: #2c3e50; font-weight: 600; padding: 8px 22px; border-radius: 18px; margin-left: 18px; transition: all 0.3s; font-size: 1rem; display: inline-block;">Search</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <canvas id="heroCanvas"></canvas>
+      <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="hero-content">
+                        <h1 class="hero-title">Empower Your Real Estate Business with Salesforce</h1>
+                        <p class="hero-subtitle">Transform your real estate operations with our Salesforce-powered solutions. Streamline property management, enhance client relationships, and drive growth with cutting-edge technology.</p>
+                        <a href="#contact" class="cta-button">Get Started</a>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="scene-container">
+                        <!-- Three.js scene will be rendered here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <h2 class="section-title">Why Choose Our Salesforce Solutions?</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>Streamlined Operations</h3>
+                        <p>Automate property management, lead tracking, and deal processing with our integrated Salesforce solutions.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">🤝</div>
+                        <h3>Enhanced Client Relationships</h3>
+                        <p>Build stronger connections with clients through personalized communication and efficient service delivery.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">📈</div>
+                        <h3>Data-Driven Insights</h3>
+                        <p>Make informed decisions with real-time analytics and comprehensive reporting tools.</p>
+                    </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Search Section -->
+    <section id="propertySearchForm" class="search-section">
+      <div class="container d-flex justify-content-center align-items-center min-vh-100">
+            <div class="bg-[#1e1e1e] p-6 rounded-xl backdrop-blur-sm" style="max-width: 600px; width: 100%;">
+              <h3 class="text-xl font-bold mb-4 highlight text-center">Search by Property</h3>
+              <p class="text-gray-400 mb-6 text-center">Enter the property details below tailored to your needs.</p>
+              
+              <form id="filterForm" class="grid grid-cols-1 gap-4">
+                <div class="space-y-2">
+                  <label class="text-sm text-gray-400">Your Budget</label>
+                  <input type="number" id="budget" placeholder="Enter your maximum budget ($)" class="form-control" />
+                </div>
+                <div class="space-y-2">
+                  <label class="text-sm text-gray-400">Number of Rooms</label>
+                  <select id="rooms" class="form-select">
+                    <option value="">Any Rooms</option>
+                    <option value="1">1 Room</option>
+                    <option value="2">2 Rooms</option>
+                    <option value="3">3 Rooms</option>
+                    <option value="4">4+ Rooms</option>
+                  </select>
+                </div>
+                <div class="space-y-2">
+                  <label class="text-sm text-gray-400">Preferred Move-in Date</label>
+                  <input type="date" id="delivery" class="form-control" />
+                </div>
+                <div class="space-y-2">
+                  <label class="text-sm text-gray-400">Desired Location</label>
+                  <input type="text" id="area" placeholder="Enter area (e.g., New Cairo)" class="form-control" />
+                </div>
+                <div class="mt-4 text-center">
+                  <button type="submit" class="btn" style="background-color: #F6D984; color: #2c3e50; font-weight: 600; padding: 6px 18px; border-radius: 6px; transition: all 0.3s ease; font-size: 0.95rem; display: inline-block;">
+                    <svg xmlns="http://www.w3.org/2000/svg" style="height: 1em; width: 1em; vertical-align: middle; margin-right: 6px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    Find My Perfect Property
+                  </button>
+                  <button type="button" id="clearSearchBtn" class="btn" style="background-color: #F6D984; color: #2c3e50; font-weight: 600; padding: 6px 18px; border-radius: 6px; transition: all 0.3s ease; font-size: 0.95rem; display: inline-block; margin-left: 10px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" style="height: 1em; width: 1em; vertical-align: middle; margin-right: 6px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    Clear Search
+                  </button>
+                </div>
+              </form>
+            </div>
+      </div>
+    </section>
+
+    <div id="results" class="mt-10" style="background: #1e1e1e; border-radius: 16px; padding: 32px 0 48px 0; margin-bottom: 48px;">
+      <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2 class="text-2xl font-bold" style="color: #fff;">Properties</h2>
+          <div class="d-flex align-items-center gap-2">
+            <button id="gridViewBtn" style="background: #222; border: none; border-radius: 8px; padding: 8px 12px; color: #F6D984; margin-right: 8px; display: flex; align-items: center; justify-content: center; transition: background 0.2s;" title="Grid View">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 20 20" stroke="currentColor"><rect x="3" y="3" width="6" height="6" rx="1.5" fill="#F6D984"/><rect x="11" y="3" width="6" height="6" rx="1.5" fill="#F6D984"/><rect x="3" y="11" width="6" height="6" rx="1.5" fill="#F6D984"/><rect x="11" y="11" width="6" height="6" rx="1.5" fill="#F6D984"/></svg>
+            </button>
+            <button id="listViewBtn" style="background: #222; border: none; border-radius: 8px; padding: 8px 12px; color: #F6D984; display: flex; align-items: center; justify-content: center; transition: background 0.2s;" title="List View">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 20 20" stroke="currentColor"><rect x="3" y="5" width="14" height="2.5" rx="1.25" fill="#F6D984"/><rect x="3" y="12.5" width="14" height="2.5" rx="1.25" fill="#F6D984"/></svg>
+            </button>
+          </div>
+        </div>
+        <div id="loadingIndicator" class="text-center py-8" style="color: #F6D984;">
+          <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-[#f6d984] border-t-transparent" style="border-color: #F6D984; border-top-color: transparent;"></div>
+          <p class="mt-4" style="color: #ccc;">Loading available units...</p>
+        </div>
+        <div id="resultsContainer" class="row" style="margin-top: 24px;"></div>
+      </div>
+    </div>
+
+    <!-- Testimonials Section -->
+    <section class="testimonial-section">
+      <div class="container">
+            <h2 class="section-title text-white">Success Stories</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <p>"Implementing Salesforce through VerticalRE transformed our real estate operations. We've seen a 40% increase in efficiency and better client satisfaction."</p>
+                        <strong>- John Smith, CEO, Prime Properties</strong>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <p>"The integration of Salesforce into our workflow has revolutionized how we manage properties and interact with clients. Highly recommended!"</p>
+                        <strong>- Sarah Johnson, Director, Urban Realty</strong>
+                    </div>
+          </div>
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <p>"VerticalRE's Salesforce solutions helped us scale our operations while maintaining excellent client relationships. A game-changer for our business."</p>
+                        <strong>- Michael Chen, Founder, Metro Estates</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+      <div class="container" style="max-width: 600px; margin: 0 auto;">
+        <h2 class="section-title">Contact Us</h2>
+        <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+
+        <form action="https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00Ddt000001yDBV" method="POST" style="background: #232323; padding: 32px; border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); color: #fff;">
+          <input type=hidden name="oid" value="00Ddt000001yDBV">
+          <input type=hidden name="retURL" value="http://www.cloudastick.com">
+          <input type=hidden name="lead_source" value="Website">
+
+          <label for="first_name">First Name</label><input  id="first_name" maxlength="40" name="first_name" size="20" type="text" class="form-control" /><br>
+
+          <label for="last_name">Last Name</label><input  id="last_name" maxlength="80" name="last_name" size="20" type="text" class="form-control" /><br>
+
+          <label for="email">Email</label><input  id="email" maxlength="80" name="email" size="20" type="text" class="form-control" /><br>
+
+          <label for="company">Company</label><input  id="company" maxlength="40" name="company" size="20" type="text" class="form-control" /><br>
+
+          <label for="description">Description</label><textarea name="description" class="form-control"></textarea><br>
+
+          <input type="submit" name="submit" class="btn btn-primary w-100" style="background: #F6D984; color: #232323; font-weight: 600;">
+        </form>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="background: #181818; color: #fff; padding: 32px 0 16px 0; border-top: 1px solid #232323;">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-md-6">
+            <h4 style="margin-bottom: 0;">
+              <a href="https://www.cloudastick.com" target="_blank" rel="noopener" style="color: #F6D984; text-decoration: none; font-weight: 700;">CLOUDASTICK</a>
+            </h4>
+            <div style="margin-top: 8px;">
+              <div style="font-weight: bold; font-size: 1.08rem;">Your Salesforce Business Partner</div>
+              <p style="margin: 6px 0 0 0; color: #ccc; font-size: 0.98rem; line-height: 1.5;">
+                We deliver state-of-the-art CRM solutions using Salesforce.com platform. Whether your business is big or small, we will always have the right solution(s) for you!
+              </p>
+            </div>
+          </div>
+          <div class="col-md-6 text-md-end">
+            <p style="margin-bottom: 0; color: #ccc;">© 2025 Cloudastick Systems</p>
+            <div style="color: #aaa; font-size: 0.97rem; margin-top: 2px;">All rights reserved.</div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Toastify JS -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <!-- Custom JS -->
+    <script src="script.js"></script>
+    <script>
+      // On page load, scroll to top (3Js Canvas) unless there is a hash in the URL
+      window.addEventListener('DOMContentLoaded', function() {
+        if (!window.location.hash) {
+          window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+        }
+      });
+    </script>
+  </body>
+</html>
