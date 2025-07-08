@@ -1064,3 +1064,32 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 // --- END: Desktop Switch Logic ---
+
+// --- BEGIN: Feature Progress Animation ---
+document.addEventListener('DOMContentLoaded', () => {
+  const fills = document.querySelectorAll('.progress-fill');
+  const nums = document.querySelectorAll('.progress-num');
+
+  fills.forEach(fill => {
+    const target = parseInt(fill.dataset.target, 10) || 0;
+    // trigger width animation after slight delay
+    setTimeout(() => {
+      fill.style.width = `${target}%`;
+    }, 500);
+  });
+
+  nums.forEach(num => {
+    const target = parseInt(num.dataset.target, 10) || 0;
+    let count = 0;
+
+    const step = () => {
+      num.textContent = `${count}%`;
+      if (count < target) {
+        count++;
+        requestAnimationFrame(step);
+      }
+    };
+    step();
+  });
+});
+// --- END: Feature Progress Animation ---
