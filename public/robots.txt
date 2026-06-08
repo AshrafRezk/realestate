@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /community
+
+Sitemap: https://www.faisalbinsaedan.com/sitemap.xml

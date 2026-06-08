@@ -1,14 +1,12 @@
 import { useEffect, useState, useRef } from 'react'
-import { Box, Container, Typography, Button, CircularProgress } from '@mui/material'
+import { Box, Typography, TextField, Button, InputAdornment } from '@mui/material'
 import { motion } from 'framer-motion'
-import { ChevronDown } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { ChevronDown, Search } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 import { getFeaturedVideo, detectVideoAspectRatio } from '../../lib/api-client'
 import VideoCover from './VideoCover'
-import VideoOverlay from './VideoOverlay'
 
-// Type declaration for Instagram embed API
 declare global {
   interface Window {
     instgrm?: {
@@ -30,172 +28,88 @@ interface FeaturedVideo {
 
 export default function HeroSection() {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const [featuredVideo, setFeaturedVideo] = useState<FeaturedVideo | null>(null)
   const [isVideoPlaying, setIsVideoPlaying] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [instagramEmbedFailed, setInstagramEmbedFailed] = useState(false)
-  const [aspectRatio, setAspectRatio] = useState<number>(16 / 9) // Default fallback: 16:9
+  const [showFallback, setShowFallback] = useState(true)
+  const [aspectRatio, setAspectRatio] = useState<number>(4 / 5)
+  const [searchQuery, setSearchQuery] = useState('')
   const videoRef = useRef<HTMLVideoElement>(null)
-
-  // Auto-play video when it loads
-  useEffect(() => {
-    if (featuredVideo && featuredVideo.videoUrl && !isLoading) {
-      setIsVideoPlaying(true)
-    }
-  }, [featuredVideo, isLoading])
 
   useEffect(() => {
     async function loadFeaturedVideo() {
-      console.log('[Hero Section] Loading featured video...')
       try {
         const response = await getFeaturedVideo()
-        console.log('[Hero Section] Video fetch response:', response)
-        
         if (response.success && response.data) {
-          console.log('[Hero Section] ✅ Video data received:', {
-            hasVideoUrl: !!response.data.videoUrl,
-            videoUrl: response.data.videoUrl,
-            hasCoverImage: !!response.data.coverImageUrl,
-            projectName: response.data.projectNameAr,
-            aspectRatio: response.data.aspectRatio,
-          })
-          
           if (response.data.videoUrl) {
             let finalAspectRatio = response.data.aspectRatio
-
-            // Priority 1: Use aspect ratio from Salesforce if available
             if (finalAspectRatio) {
-              console.log('[Hero Section] ✅ Using aspect ratio from Salesforce:', finalAspectRatio)
               setAspectRatio(finalAspectRatio)
             } else {
-              // Priority 2: Detect from native video metadata if it's a native video
               const isNativeVideo = /\.(mp4|webm|ogg|m3u8|mov|avi)(\?|$)/i.test(response.data.videoUrl) ||
                                     response.data.videoUrl.startsWith('blob:') ||
                                     response.data.videoUrl.startsWith('data:video/')
-              
               if (isNativeVideo) {
-                console.log('[Hero Section] Attempting to detect aspect ratio from video metadata...')
                 try {
                   const detectedRatio = await detectVideoAspectRatio(response.data.videoUrl)
                   if (detectedRatio) {
                     finalAspectRatio = detectedRatio
-                    console.log('[Hero Section] ✅ Detected aspect ratio from video metadata:', detectedRatio)
                     setAspectRatio(detectedRatio)
-                  } else {
-                    console.log('[Hero Section] ⚠️ Could not detect aspect ratio, using fallback 16:9')
-                    setAspectRatio(16 / 9)
                   }
                 } catch (error) {
-                  console.warn('[Hero Section] ⚠️ Error detecting aspect ratio:', error)
-                  setAspectRatio(16 / 9)
+                  setAspectRatio(4 / 5)
                 }
               } else {
-                // Priority 3: Fallback to 16:9 for embedded videos (YouTube, etc.)
-                // Instagram videos are typically 1:1 or 9:16, but we'll use 16:9 as safe default
-                // unless we can detect it from the URL pattern
                 if (response.data.videoUrl.includes('instagram.com/reel/')) {
-                  // Instagram Reels are typically 9:16 (vertical)
                   setAspectRatio(9 / 16)
-                  console.log('[Hero Section] Using Instagram Reel aspect ratio (9:16)')
                 } else if (response.data.videoUrl.includes('instagram.com/p/')) {
-                  // Instagram posts are typically 1:1 (square)
                   setAspectRatio(1)
-                  console.log('[Hero Section] Using Instagram post aspect ratio (1:1)')
                 } else {
-                  // Default fallback: 16:9
-                  setAspectRatio(16 / 9)
-                  console.log('[Hero Section] Using default aspect ratio (16:9)')
+                  setAspectRatio(4 / 5)
                 }
               }
             }
-
-            setFeaturedVideo({
-              ...response.data,
-              aspectRatio: finalAspectRatio,
-            })
-            // Auto-play video when it loads
+            setFeaturedVideo({ ...response.data, aspectRatio: finalAspectRatio })
             setIsVideoPlaying(true)
-            console.log('[Hero Section] ✅ Video set and marked for playback')
-          } else {
-            console.warn('[Hero Section] ⚠️ No video URL in response data')
           }
-        } else {
-          console.warn('[Hero Section] ⚠️ No video data in response:', response)
         }
       } catch (error) {
-        console.error('[Hero Section] ❌ Error loading featured video:', error)
+        console.error('Error loading featured video:', error)
       } finally {
         setIsLoading(false)
-        console.log('[Hero Section] Loading complete')
       }
     }
     loadFeaturedVideo()
   }, [])
 
-  // Auto-play video when it becomes available
-  useEffect(() => {
-    if (featuredVideo && featuredVideo.videoUrl && !isLoading) {
-      console.log('[Hero Section] ✅ Video available, setting to play:', featuredVideo.videoUrl)
-      setIsVideoPlaying(true)
-    } else {
-      console.log('[Hero Section] Video not ready:', {
-        hasFeaturedVideo: !!featuredVideo,
-        hasVideoUrl: !!featuredVideo?.videoUrl,
-        isLoading,
-        isVideoPlaying,
-      })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [featuredVideo, isLoading])
-
-  // Load Instagram embed script when Instagram video is present
   useEffect(() => {
     if (featuredVideo?.videoUrl?.includes('instagram.com')) {
-      // Reset failed state when video changes
       setInstagramEmbedFailed(false)
-
-      // Check if script is already loaded
       if (window.instgrm) {
-        console.log('[Hero Section] Instagram embed script already loaded, processing embeds...')
         window.instgrm.Embeds.process()
         return
       }
-
-      // Try to load Instagram embed script
       const script = document.createElement('script')
       script.src = 'https://www.instagram.com/embed.js'
       script.async = true
       script.onload = () => {
-        console.log('[Hero Section] ✅ Instagram embed script loaded')
-        // Wait a bit for the script to initialize
         setTimeout(() => {
           if (window.instgrm) {
             window.instgrm.Embeds.process()
           } else {
-            console.warn('[Hero Section] ⚠️ Instagram embed script loaded but instgrm not available')
             setInstagramEmbedFailed(true)
           }
         }, 100)
       }
-      script.onerror = () => {
-        console.error('[Hero Section] ❌ Failed to load Instagram embed script (likely blocked by ad blocker)')
-        console.log('[Hero Section] Falling back to clickable link UI')
-        setInstagramEmbedFailed(true)
-      }
-      
-      // Add timeout fallback in case script loads but doesn't initialize
+      script.onerror = () => setInstagramEmbedFailed(true)
       const timeout = setTimeout(() => {
-        if (!window.instgrm) {
-          console.warn('[Hero Section] ⚠️ Instagram embed script timeout, using fallback UI')
-          setInstagramEmbedFailed(true)
-        }
+        if (!window.instgrm) setInstagramEmbedFailed(true)
       }, 3000)
-
       document.body.appendChild(script)
-
       return () => {
         clearTimeout(timeout)
-        // Cleanup: remove script if component unmounts
         const existingScript = document.querySelector('script[src="https://www.instagram.com/embed.js"]')
         if (existingScript && existingScript.parentNode) {
           existingScript.parentNode.removeChild(existingScript)
@@ -205,324 +119,223 @@ export default function HeroSection() {
   }, [featuredVideo])
 
   const scrollToProjects = () => {
-    document.getElementById('latest-projects')?.scrollIntoView({
-      behavior: 'smooth',
-    })
+    const target = document.getElementById('inspiring-spaces')
+    if (!target) return
+    const targetPosition = target.getBoundingClientRect().top + window.pageYOffset
+    const startPosition = window.pageYOffset
+    const distance = targetPosition - startPosition
+    const duration = 1500
+    let start: number | null = null
+    const easeInOutCubic = (t: number) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+    const animation = (currentTime: number) => {
+      if (start === null) start = currentTime
+      const timeElapsed = currentTime - start
+      const progress = Math.min(timeElapsed / duration, 1)
+      const ease = easeInOutCubic(progress)
+      window.scrollTo(0, startPosition + distance * ease)
+      if (timeElapsed < duration) {
+        requestAnimationFrame(animation)
+      }
+    }
+    requestAnimationFrame(animation)
+  }
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`)
+    } else {
+      navigate('/search')
+    }
+  }
+
+  const renderBackgroundVideo = () => {
+    if (!featuredVideo || !featuredVideo.videoUrl || isLoading) {
+      if (featuredVideo?.coverImageUrl) {
+        return (
+          <Box
+            sx={{
+              position: 'absolute', inset: 0,
+              background: `url(${featuredVideo.coverImageUrl}) center/cover`,
+            }}
+          />
+        )
+      }
+      return (
+        <video
+          autoPlay
+          muted
+          playsInline
+          loop
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+        >
+          <source src="/my-hero-video.mp4" type="video/mp4" />
+        </video>
+      )
+    }
+
+    if (featuredVideo.videoUrl.includes('instagram.com')) {
+      if (instagramEmbedFailed) {
+        return (
+          <Box
+            sx={{
+              position: 'absolute', inset: 0,
+              background: featuredVideo.coverImageUrl ? `url(${featuredVideo.coverImageUrl}) center/cover` : '#e2e8f0',
+            }}
+          />
+        )
+      }
+      return (
+        <Box
+          component="blockquote"
+          className="instagram-media"
+          data-instgrm-permalink={featuredVideo.videoUrl}
+          data-instgrm-version="14"
+          sx={{ position: 'absolute', inset: 0, m: 0, p: 0, '& iframe': { width: '100% !important', height: '100% !important', border: 'none' } }}
+        />
+      )
+    }
+
+    const isNativeVideo = /\.(mp4|webm|ogg|m3u8|mov|avi)(\?|$)/i.test(featuredVideo.videoUrl) ||
+                          featuredVideo.videoUrl.startsWith('blob:') ||
+                          featuredVideo.videoUrl.startsWith('data:video/')
+
+    if (isNativeVideo) {
+      return (
+        <video
+          ref={videoRef}
+          src={featuredVideo.videoUrl}
+          autoPlay
+          muted
+          loop
+          playsInline
+          onLoadedMetadata={() => {
+            if (videoRef.current && videoRef.current.videoWidth && videoRef.current.videoHeight) {
+              const detectedRatio = videoRef.current.videoWidth / videoRef.current.videoHeight
+              if (Math.abs(detectedRatio - aspectRatio) > 0.01) {
+                setAspectRatio(detectedRatio)
+              }
+            }
+            setIsVideoPlaying(true)
+          }}
+          onPlay={() => setIsVideoPlaying(true)}
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+        />
+      )
+    }
+
+    let finalIframeUrl = featuredVideo.videoUrl.trim()
+    const separator = finalIframeUrl.includes('?') ? '&' : '?'
+    if (!finalIframeUrl.includes('autoplay=')) {
+      finalIframeUrl += `${separator}autoplay=1&mute=1&playsinline=1`
+    }
+    if (finalIframeUrl.includes('youtube.com') || finalIframeUrl.includes('youtu.be')) {
+      if (!finalIframeUrl.includes('controls=')) {
+        finalIframeUrl += '&controls=0'
+      }
+      if (!finalIframeUrl.includes('loop=')) {
+        finalIframeUrl += '&loop=1'
+      }
+    }
+    return (
+      <Box
+        component="iframe"
+        src={finalIframeUrl}
+        onLoad={() => setTimeout(() => setIsVideoPlaying(true), 500)}
+        sx={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none', pointerEvents: 'none' }}
+        allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+        allowFullScreen
+        loading="eager"
+      />
+    )
   }
 
   return (
-    <Box
-      sx={{
-        position: 'relative',
-        minHeight: { xs: '85vh', md: '90vh' },
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'hidden',
-      }}
-    >
-      {/* Background */}
-      <Box sx={{ position: 'absolute', inset: 0 }}>
-        {/* Show cover image only while loading or if no video */}
-        {(!featuredVideo || !featuredVideo.videoUrl || isLoading) && (
-          <Box
-            sx={{
-              position: 'absolute',
-              inset: 0,
-              backgroundImage: featuredVideo?.coverImageUrl 
-                ? `url(${featuredVideo.coverImageUrl})`
-                : 'linear-gradient(135deg, #1a365d 0%, #2c5282 100%)',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-            }}
-          />
-        )}
-        {/* Animated dark overlay for readability */}
-        {(featuredVideo?.videoUrl || featuredVideo?.coverImageUrl) && <VideoOverlay />}
-        
-        {featuredVideo && featuredVideo.videoUrl && (
-          <>
-            {/* Instagram videos use official embed method with fallback UI */}
-            {featuredVideo.videoUrl.includes('instagram.com') ? (
-              instagramEmbedFailed ? (
-                // Fallback: Show clickable link/image when embed is blocked
-                <Box
-                  component="a"
-                  href={featuredVideo.videoUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  sx={{
-                    position: 'absolute',
-                    inset: 0,
-                    width: '100%',
-                    height: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    textDecoration: 'none',
-                    background: featuredVideo.coverImageUrl
-                      ? `url(${featuredVideo.coverImageUrl})`
-                      : 'linear-gradient(135deg, #1a365d 0%, #2c5282 100%)',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    zIndex: 1,
-                    cursor: 'pointer',
-                    '&:hover': {
-                      opacity: 0.9,
-                    },
-                  }}
-                >
-                  <Box
-                    sx={{
-                      textAlign: 'center',
-                      color: 'white',
-                      p: 3,
-                      bgcolor: 'rgba(0, 0, 0, 0.5)',
-                      borderRadius: 2,
-                      backdropFilter: 'blur(10px)',
-                    }}
-                  >
-                    <Typography variant="h5" fontWeight="bold" gutterBottom>
-                      شاهد الفيديو على Instagram
-                    </Typography>
-                    <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                      اضغط للفتح
-                    </Typography>
-                  </Box>
-                </Box>
-              ) : (
-                // Official Instagram embed method with VideoCover wrapper
-                <VideoCover
-                  aspectRatio={aspectRatio}
-                  mediaType="instagram"
-                  sx={{ zIndex: 1 }}
-                >
-                <Box
-                  component="blockquote"
-                  className="instagram-media"
-                  data-instgrm-permalink={featuredVideo.videoUrl}
-                  data-instgrm-version="14"
-                  sx={{
-                    width: '100%',
-                    height: '100%',
-                    margin: 0,
-                    padding: 0,
-                    background: 'transparent',
-                    border: 'none',
-                    display: 'block',
-                    '& iframe': {
-                      width: '100% !important',
-                      height: '100% !important',
-                      border: 'none',
-                      display: 'block',
-                    },
-                  }}
-                />
-                </VideoCover>
-              )
-            ) : (
-              /* Check if it's a native video or iframe embed */
-              (() => {
-                const isNativeVideo = /\.(mp4|webm|ogg|m3u8|mov|avi)(\?|$)/i.test(featuredVideo.videoUrl) ||
-                                      featuredVideo.videoUrl.startsWith('blob:') ||
-                                      featuredVideo.videoUrl.startsWith('data:video/')
-                
-                if (isNativeVideo) {
-                  // Native video element with VideoCover
-                  return (
-                    <VideoCover
-                      aspectRatio={aspectRatio}
-                      mediaType="video"
-                      sx={{ zIndex: 1 }}
-                    >
-                      <video
-                        ref={videoRef}
-                        src={featuredVideo.videoUrl}
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                        onLoadedMetadata={() => {
-                          // Update aspect ratio if video metadata loads and differs
-                          if (videoRef.current) {
-                            const video = videoRef.current
-                            if (video.videoWidth && video.videoHeight) {
-                              const detectedRatio = video.videoWidth / video.videoHeight
-                              if (Math.abs(detectedRatio - aspectRatio) > 0.01) {
-                                console.log('[Hero Section] Updating aspect ratio from video metadata:', detectedRatio)
-                                setAspectRatio(detectedRatio)
-                              }
-                            }
-                          }
-                          setIsVideoPlaying(true)
-                        }}
-                        onPlay={() => setIsVideoPlaying(true)}
-                        style={{
-                  width: '100%',
-                  height: '100%',
-                        }}
-                      />
-                    </VideoCover>
-                  )
-                } else {
-                  // YouTube and Google Drive videos use iframe with VideoCover
-                  return (
-                    <VideoCover
-                      aspectRatio={aspectRatio}
-                      mediaType="iframe"
-                      sx={{ zIndex: 1 }}
-              >
-                <Box
-                  component="iframe"
-                  src={(() => {
-                    // Video URL is already processed by the API client
-                    // Just use it directly as it should already be in embed format with autoplay
-                    const videoUrl = featuredVideo.videoUrl.trim()
-                    console.log('[Hero Section] Using processed video URL for iframe (autoplay enabled):', videoUrl)
-                    return videoUrl
-                  })()}
-                  onLoad={() => {
-                    console.log('[Hero Section] ✅ Video iframe loaded successfully - autoplay should start')
-                    setIsVideoPlaying(true)
-                  }}
-                  onError={(e) => {
-                    console.error('[Hero Section] ❌ Video iframe failed to load:', e)
-                  }}
-                  sx={{
-                    width: '100%',
-                    height: '100%',
-                    border: 'none',
-                    pointerEvents: 'none',
-                    display: 'block',
-                  }}
-                  allow="autoplay; encrypted-media; fullscreen; picture-in-picture; clipboard-read; clipboard-write"
-                  allowFullScreen
-                  loading="eager"
-                  sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox allow-autoplay"
-                />
-                    </VideoCover>
-                  )
-                }
-              })()
-            )}
-          </>
-        )}
-      </Box>
+    <Box sx={{ position: 'relative', height: '100vh', minHeight: 700, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      {/* Background Video/Image */}
+      {renderBackgroundVideo()}
+
+      {/* Dark Overlay */}
+      <Box sx={{ position: 'absolute', inset: 0, bgcolor: 'rgba(0, 0, 0, 0.35)', zIndex: 2 }} />
 
       {/* Content */}
-      <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 10, textAlign: 'center', px: 3 }}>
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
-        >
-          {/* Logo */}
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            style={{ marginBottom: '32px' }}
-          >
-            <Box
-              component="img"
-              src="/RiymarLogo-White.png"
-              alt={t('home.title')}
-              sx={{
-                height: { xs: '64px', md: '80px' },
-                width: 'auto',
-                mx: 'auto',
-              }}
-            />
-          </motion.div>
-
-          {/* Main Heading */}
+      <Box sx={{ position: 'relative', zIndex: 3, textAlign: 'center', px: { xs: 2, md: 4 }, maxWidth: 900, mx: 'auto', width: '100%' }}>
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}>
           <Typography
             variant="h1"
             sx={{
-              fontSize: { xs: '2rem', md: '3rem', lg: '3.75rem' },
-              fontWeight: 'bold',
-              color: 'white',
-              mb: 2,
-              lineHeight: 1.2,
+              color: '#ffffff',
+              mb: { xs: 2, md: 3 },
             }}
           >
-            {t('home.heroTitle')}
-            <br />
-            <Box component="span" sx={{ color: 'secondary.main' }}>
-              {t('home.heroSubtitle')}
-            </Box>
+            Find your sanctuary in the dunes
           </Typography>
+        </motion.div>
 
-          <Typography
-            variant="h6"
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }}>
+          <Box
+            component="form"
+            onSubmit={handleSearch}
             sx={{
-              color: 'rgba(255, 255, 255, 0.8)',
-              mb: 4,
-              maxWidth: '42rem',
+              display: 'flex',
+              flexDirection: { xs: 'column', sm: 'row' },
+              gap: 2,
+              bgcolor: 'rgba(255, 255, 255, 0.92)',
+              backdropFilter: 'blur(12px)',
+              p: { xs: 2, sm: 3 },
+              maxWidth: 700,
               mx: 'auto',
-              lineHeight: 1.6,
+              borderRadius: { xs: 3, md: 4 },
+              overflow: 'hidden',
             }}
           >
-            {t('home.heroDescription')}
-          </Typography>
-
-          {/* CTAs */}
-          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, justifyContent: 'center' }}>
+            <TextField
+              placeholder="Search by city, neighborhood, or building..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              variant="standard"
+              fullWidth
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Search size={20} color="#003527" />
+                    </InputAdornment>
+                  ),
+                  disableUnderline: true,
+                  sx: { px: 1, py: 1.5, fontSize: '1rem', color: '#191c1e' },
+                },
+              }}
+              sx={{ '& .MuiInputBase-root': { bgcolor: 'transparent', borderRadius: { xs: 3, md: 4 } } }}
+            />
             <Button
-              component={Link}
-              to="/search"
+              type="submit"
               variant="contained"
-              color="secondary"
-              size="large"
-              sx={{ minWidth: '200px' }}
+              sx={{
+                bgcolor: '#d4af37',
+                color: '#003527',
+                px: 5,
+                py: 1.5,
+                whiteSpace: 'nowrap',
+                borderRadius: { xs: 3, md: 4 },
+                '&:hover': { bgcolor: '#e9c349' },
+              }}
             >
-              {t('home.exploreProjects')}
+              EXPLORE NOW
             </Button>
           </Box>
         </motion.div>
-      </Container>
+      </Box>
 
-      {/* Scroll Indicator */}
-      <motion.button
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 0.5 }}
+      {/* Scroll Down */}
+      <Box
         onClick={scrollToProjects}
-        style={{
-          position: 'absolute',
-          bottom: '32px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          background: 'none',
-          border: 'none',
-          color: 'rgba(255, 255, 255, 0.6)',
-          cursor: 'pointer',
-        }}
-        aria-label={t('home.scrollDown')}
+        sx={{ position: 'absolute', bottom: 30, left: '50%', transform: 'translateX(-50%)', zIndex: 3, cursor: 'pointer', color: 'white' }}
       >
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
-        >
+        <motion.span animate={{ y: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }} style={{ display: 'inline-block' }}>
           <ChevronDown size={32} />
-        </motion.div>
-      </motion.button>
-
-      {/* Loading State */}
-      {isLoading && (
-        <Box
-          sx={{
-            position: 'absolute',
-            inset: 0,
-            bgcolor: 'primary.dark',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <CircularProgress sx={{ color: 'white' }} />
-        </Box>
-      )}
+        </motion.span>
+      </Box>
     </Box>
   )
 }

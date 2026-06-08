@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { DEMO_CONFIG } from '../demo-config'
 
 interface FavoritesState {
   favoriteUnitIds: string[]
@@ -36,7 +37,7 @@ export const useFavoritesStore = create<FavoritesState>()(
       clearFavorites: () => set({ favoriteUnitIds: [] }),
     }),
     {
-      name: 'binsaedan-favorites',
+      name: `${DEMO_CONFIG.localStoragePrefix}-favorites`,
     }
   )
 )

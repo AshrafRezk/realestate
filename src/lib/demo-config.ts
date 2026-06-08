@@ -1,0 +1,68 @@
+export const DEMO_CONFIG = {
+  brand: {
+    nameAr: 'CloudEstate',
+    nameEn: 'CloudEstate',
+    shortName: 'CloudEstate',
+    taglineAr: 'شريكك الموثوق في العقارات',
+    taglineEn: 'Your Trusted Real Estate Partner',
+    logo: {
+      dark: '/brand/logo-dark.png',
+      white: '/brand/logo-white.png',
+      vertical: '/brand/logo-vertical.png',
+      icon: '/brand/logo-icon.svg',
+      favicon: '/brand/favicon.ico',
+      appIcon: '/brand/appicon.png',
+    },
+  },
+  contact: {
+    phoneDisplay: '01005298308',
+    phoneTel: 'tel:+201005298308',
+    whatsappUrl: 'https://wa.me/+201005298308',
+    email: 'info@cloudestate.com',
+    supportEmail: 'support@cloudestate.com',
+    emailDisplay: 'info@cloudestate.com / support@cloudestate.com',
+  },
+  social: {
+    instagram: 'https://www.instagram.com/cloudastick/',
+    twitter: 'https://x.com/cloudastick',
+    linkedin: 'https://www.linkedin.com/company/cloudastick/',
+    facebook: 'https://www.facebook.com/cloudastick',
+    tiktok: 'https://www.tiktok.com/@cloudastick?_r=1&_t=ZS-96vTh4SGSuI',
+  },
+  location: {
+    addressAr: 'القاهرة، مصر',
+    addressEn: 'Cairo, Egypt',
+    countryAr: 'مصر',
+    countryEn: 'Egypt',
+    defaultCityAr: 'القاهرة',
+    defaultCityEn: 'Cairo',
+    phoneCountryCode: '+20',
+    workingDaysAr: 'الأحد - الخميس',
+    workingDaysEn: 'Sunday - Thursday',
+    workingHoursAr: '9 ص - 5 م',
+    workingHoursEn: '9 AM - 5 PM',
+    currency: 'EGP',
+  },
+  features: {
+    showSubsidyBadges: true,
+    showVision2030: true,
+    showBoardMembers: true,
+  },
+  offices: [
+    {
+      project: 'Cloudastick Systems (المكتب الرئيسي)',
+      projectEn: 'Cloudastick Systems (HQ Office)',
+      url: 'https://maps.app.goo.gl/QcwfRMTfWPmNzYc97',
+      coords: '30.0784312,31.3272854',
+      dirUrl: 'https://www.google.com/maps/dir/?api=1&destination=30.0784312,31.3272854',
+      isHq: true,
+    },
+  ],
+  localStoragePrefix: 'cloudestate',
+  cacheKeyPrefix: 'cloudestate',
+  userAgent: 'CloudEstate-PWA/1.0',
+  maintenancePassword: 'demo2025',
+  jwtSecretFallback: 'change-this-secret-in-production',
+}
+
+export type DemoConfig = typeof DEMO_CONFIG

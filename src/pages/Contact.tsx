@@ -1,23 +1,20 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Box,
   Container,
   Typography,
   Card,
   CardContent,
-  TextField,
-  Button,
   Grid,
-  Alert,
   IconButton,
 } from '@mui/material'
+import { alpha } from '@mui/material/styles'
 import { motion } from 'framer-motion'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
 import { useTranslation } from 'react-i18next'
-import { Phone, Mail, MapPin, Clock, Send, CheckCircle, Instagram, Linkedin, MessageCircle, Video } from 'lucide-react'
-import { createLead, getOfficeMapUrl } from '../lib/api-client'
+import { Phone, Mail, MapPin, Clock, Instagram, Linkedin } from 'lucide-react'
+import { getOfficeMapUrl } from '../lib/api-client'
+import LeadInterestForm from '../components/home/LeadInterestForm'
+import { DEMO_CONFIG } from '../lib/demo-config'
 
 // Custom X (Twitter) icon component
 const XIcon = ({ size = 20 }: { size?: number }) => (
@@ -45,34 +42,32 @@ const TikTokIcon = ({ size = 20 }: { size?: number }) => (
   </svg>
 )
 
-type FormData = z.infer<ReturnType<typeof getSchema>>
+const WhatsAppIcon = ({ size = 20 }: { size?: number }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M12.04 2C6.55 2 2.08 6.47 2.08 11.96c0 1.77.46 3.5 1.33 5.02L2 22l5.15-1.35a9.9 9.9 0 0 0 4.89 1.25h.01c5.49 0 9.96-4.47 9.96-9.96C22.01 6.47 17.54 2 12.04 2Zm0 17.99h-.01a8.3 8.3 0 0 1-4.22-1.16l-.3-.18-3.06.8.82-2.98-.2-.31a8.26 8.26 0 0 1-1.26-4.4c0-4.58 3.73-8.3 8.31-8.3 4.58 0 8.31 3.72 8.31 8.3 0 4.58-3.73 8.3-8.39 8.3Zm4.82-6.2c-.26-.13-1.53-.75-1.77-.84-.24-.09-.41-.13-.58.13-.17.26-.67.84-.82 1.01-.15.17-.3.2-.56.07-.26-.13-1.08-.4-2.06-1.27-.76-.68-1.27-1.52-1.42-1.78-.15-.26-.02-.4.11-.53.12-.12.26-.3.39-.45.13-.15.17-.26.26-.43.09-.17.04-.32-.02-.45-.06-.13-.58-1.39-.79-1.9-.21-.5-.43-.43-.58-.44h-.5c-.17 0-.45.06-.69.32-.24.26-.9.88-.9 2.15 0 1.27.92 2.5 1.05 2.68.13.17 1.81 2.76 4.38 3.87.61.26 1.08.42 1.45.54.61.19 1.16.16 1.6.1.49-.07 1.53-.62 1.75-1.22.22-.6.22-1.12.15-1.22-.06-.1-.23-.16-.49-.29Z" />
+  </svg>
+)
 
-const getSchema = (t: (key: string) => string) => z.object({
-  firstName: z.string().min(2, t('registerInterest.firstNameRequired')),
-  lastName: z.string().min(2, t('registerInterest.lastNameRequired')),
-  email: z.string().email(t('registerInterest.emailInvalid')),
-  phone: z.string().min(9, t('registerInterest.phoneInvalid')),
-  message: z.string().min(10, t('contact.message')),
-})
+const salesOffices = DEMO_CONFIG.offices
 
 export default function Contact() {
-  const { t } = useTranslation()
-  const [isSuccess, setIsSuccess] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const { t, i18n } = useTranslation()
+  const isRtl = i18n.language.startsWith('ar')
   const [mapUrl, setMapUrl] = useState<string | null>(null)
   const [mapMetaKeywords, setMapMetaKeywords] = useState<string | undefined>(undefined)
   const [isLoadingMap, setIsLoadingMap] = useState(true)
+  const [activeLocation, setActiveLocation] = useState<OfficeLocation>(salesOffices[0])
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm<FormData>({
-    resolver: zodResolver(getSchema(t)),
-  })
+  const getEmbedUrl = () => {
+    return `https://maps.google.com/maps?q=${activeLocation.coords}&t=&z=15&ie=UTF8&iwloc=&output=embed`
+  }
 
-  // Fetch office map URL from Salesforce
   useEffect(() => {
     const fetchMapUrl = async () => {
       setIsLoadingMap(true)
@@ -89,28 +84,26 @@ export default function Contact() {
     fetchMapUrl()
   }, [])
 
-  const onSubmit = async (data: FormData) => {
-    setError(null)
-
-    try {
-      const response = await createLead(data)
-
-      if (response.success) {
-        setIsSuccess(true)
-        reset()
-        setTimeout(() => setIsSuccess(false), 5000)
-      } else {
-        setError(response.error || t('contact.errorOccurred'))
+  useEffect(() => {
+    const handleHashScroll = () => {
+      if (window.location.hash === '#locations') {
+        setTimeout(() => {
+          const element = document.getElementById('locations')
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }
+        }, 300)
       }
-    } catch {
-      setError(t('contact.errorOccurred'))
     }
-  }
+    handleHashScroll()
+    window.addEventListener('hashchange', handleHashScroll)
+    return () => window.removeEventListener('hashchange', handleHashScroll)
+  }, [])
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'transparent' }}>
       {/* Header */}
-      <Box sx={{ bgcolor: 'primary.main', color: 'white', px: { xs: 2, md: 3 }, py: 6, textAlign: 'center' }}>
+      <Box sx={(theme) => ({ bgcolor: alpha(theme.palette.primary.main, 0.8), backdropFilter: 'blur(20px)', color: 'white', px: { xs: 2, md: 3 }, py: 6, textAlign: 'center' })}>
         <Container maxWidth="lg">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -128,114 +121,26 @@ export default function Contact() {
 
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <Grid container spacing={4}>
-          {/* Contact Form */}
+          {/* Message form */}
           <Grid size={{ xs: 12, md: 6 }}>
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.1 }}
             >
-              <Card>
+              <Card
+                sx={(theme) => ({
+                  backgroundColor: alpha(theme.palette.background.paper, 0.6),
+                  backdropFilter: 'blur(16px)',
+                  border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.05)',
+                })}
+              >
                 <CardContent sx={{ p: 3 }}>
                   <Typography variant="h6" fontWeight="semibold" gutterBottom>
                     {t('contact.formTitle')}
                   </Typography>
-
-                  {isSuccess ? (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                    >
-                      <Box sx={{ textAlign: 'center', py: 4 }}>
-                        <Box sx={{ fontSize: 64, color: 'success.main', mb: 2, display: 'flex', justifyContent: 'center' }}>
-                        <CheckCircle size={64} color="#38a169" />
-                      </Box>
-                        <Typography variant="h6" fontWeight="semibold" gutterBottom>
-                          {t('contact.messageSent')}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {t('contact.willContactSoon')}
-                        </Typography>
-                      </Box>
-                    </motion.div>
-                  ) : (
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                      <Grid container spacing={2} sx={{ mt: 1 }}>
-                        <Grid size={{ xs: 12, sm: 6 }}>
-                          <TextField
-                            {...register('firstName')}
-                            label={t('contact.firstName')}
-                            placeholder={t('contact.firstNamePlaceholder')}
-                            fullWidth
-                            error={!!errors.firstName}
-                            helperText={errors.firstName?.message}
-                          />
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 6 }}>
-                          <TextField
-                            {...register('lastName')}
-                            label={t('contact.lastName')}
-                            placeholder={t('contact.lastNamePlaceholder')}
-                            fullWidth
-                            error={!!errors.lastName}
-                            helperText={errors.lastName?.message}
-                          />
-                        </Grid>
-                        <Grid size={{ xs: 12 }}>
-                          <TextField
-                            {...register('email')}
-                            label={t('contact.email')}
-                            type="email"
-                            placeholder={t('contact.emailPlaceholder')}
-                            fullWidth
-                            error={!!errors.email}
-                            helperText={errors.email?.message}
-                          />
-                        </Grid>
-                        <Grid size={{ xs: 12 }}>
-                          <TextField
-                            {...register('phone')}
-                            label={t('contact.phone')}
-                            type="tel"
-                            placeholder={t('contact.phonePlaceholder')}
-                            fullWidth
-                            error={!!errors.phone}
-                            helperText={errors.phone?.message}
-                          />
-                        </Grid>
-                        <Grid size={{ xs: 12 }}>
-                          <TextField
-                            {...register('message')}
-                            label={t('contact.message')}
-                            placeholder={t('contact.messagePlaceholder')}
-                            fullWidth
-                            multiline
-                            rows={4}
-                            error={!!errors.message}
-                            helperText={errors.message?.message}
-                          />
-                        </Grid>
-                      </Grid>
-
-                      {error && (
-                        <Alert severity="error" sx={{ mt: 2 }}>
-                          {error}
-                        </Alert>
-                      )}
-
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        size="large"
-                        fullWidth
-                        disabled={isSubmitting}
-                        startIcon={<Send size={20} />}
-                        sx={{ mt: 2 }}
-                      >
-                        {isSubmitting ? t('contact.submitting') : t('contact.send')}
-                      </Button>
-                    </form>
-                  )}
+                  <LeadInterestForm mode="inline" active />
                 </CardContent>
               </Card>
             </motion.div>
@@ -257,19 +162,19 @@ export default function Contact() {
                     {
                       icon: Phone,
                       label: t('contact.phoneLabel'),
-                      value: '+966 11 234 5678',
-                      href: 'tel:+966112345678',
+                      value: DEMO_CONFIG.contact.phoneDisplay,
+                      href: DEMO_CONFIG.contact.phoneTel,
                     },
                     {
                       icon: Mail,
                       label: t('contact.emailLabel'),
-                      value: 'info@binsaedan.com',
-                      href: 'mailto:info@binsaedan.com',
+                      value: `${DEMO_CONFIG.contact.email} / ${DEMO_CONFIG.contact.supportEmail}`,
+                      href: `mailto:${DEMO_CONFIG.contact.email}`,
                     },
                     {
                       icon: MapPin,
                       label: t('contact.addressLabel'),
-                      value: t('contact.address'),
+                      value: t('contact.address', { address: isRtl ? DEMO_CONFIG.location.addressAr : DEMO_CONFIG.location.addressEn }),
                     },
                     {
                       icon: Clock,
@@ -279,7 +184,14 @@ export default function Contact() {
                   ].map((item) => {
                     const Icon = item.icon
                     const content = (
-                      <Card>
+                      <Card
+                        sx={(theme) => ({
+                          backgroundColor: alpha(theme.palette.background.paper, 0.6),
+                          backdropFilter: 'blur(16px)',
+                          border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
+                          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.05)',
+                        })}
+                      >
                         <CardContent>
                           <Box sx={{ display: 'flex', alignItems: 'start', gap: 2 }}>
                             <Box
@@ -332,39 +244,33 @@ export default function Contact() {
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                   {[
-                    { 
-                      icon: Instagram, 
-                      href: 'https://www.instagram.com/faisalsaedanco', 
+                    {
+                      icon: Instagram,
+                      href: DEMO_CONFIG.social.instagram,
                       label: t('share.instagram'),
                       color: '#E4405F'
                     },
-                    { 
-                      icon: XIcon, 
-                      href: 'https://x.com/faisalsaedanco', 
+                    {
+                      icon: XIcon,
+                      href: DEMO_CONFIG.social.twitter,
                       label: t('share.twitter'),
                       color: '#000000'
                     },
-                    { 
-                      icon: Linkedin, 
-                      href: 'https://www.linkedin.com/company/faisal-binsaedan', 
+                    {
+                      icon: Linkedin,
+                      href: DEMO_CONFIG.social.linkedin,
                       label: t('share.linkedin'),
                       color: '#0077B5'
                     },
-                    { 
-                      icon: MessageCircle, 
-                      href: 'https://wa.me/966920024010', 
+                    {
+                      icon: WhatsAppIcon,
+                      href: DEMO_CONFIG.contact.whatsappUrl,
                       label: t('share.whatsapp'),
                       color: '#25D366'
                     },
-                    { 
-                      icon: Video, 
-                      href: 'https://www.snapchat.com/@binsaedanco', 
-                      label: t('share.snapchat'),
-                      color: '#FFFC00'
-                    },
-                    { 
-                      icon: TikTokIcon, 
-                      href: 'https://www.tiktok.com/@faisalbinsaedan.c', 
+                    {
+                      icon: TikTokIcon,
+                      href: DEMO_CONFIG.social.tiktok,
                       label: t('share.tiktok'),
                       color: '#000000'
                     },
@@ -380,7 +286,7 @@ export default function Contact() {
                         sx={{
                           border: 1,
                           borderColor: 'divider',
-                          '&:hover': { 
+                          '&:hover': {
                             bgcolor: 'action.hover',
                             borderColor: social.color || 'primary.main',
                             '& svg': {
@@ -397,70 +303,227 @@ export default function Contact() {
                   })}
                 </Box>
               </Box>
-
-              {/* Map */}
-              <Box
-                sx={{
-                  mt: 3,
-                  aspectRatio: '16/9',
-                  bgcolor: 'grey.100',
-                  borderRadius: 2,
-                  overflow: 'hidden',
-                  border: 1,
-                  borderColor: 'divider',
-                  position: 'relative',
-                }}
-              >
-                {isLoadingMap ? (
-                  <Box
-                    sx={{
-                      width: '100%',
-                      height: '100%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <Box sx={{ textAlign: 'center' }}>
-                      <MapPin size={32} color="#718096" style={{ margin: '0 auto 8px', display: 'block' }} />
-                      <Typography variant="caption" color="text.secondary">
-                        {t('contact.mapPlaceholder')}
-                      </Typography>
-                    </Box>
-                  </Box>
-                ) : mapUrl ? (
-                  <iframe
-                    src={mapUrl}
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    title={mapMetaKeywords || t('contact.mapTitle') || 'Office Location'}
-                  />
-                ) : (
-                  <Box
-                    sx={{
-                      width: '100%',
-                      height: '100%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <Box sx={{ textAlign: 'center' }}>
-                      <MapPin size={32} color="#718096" style={{ margin: '0 auto 8px', display: 'block' }} />
-                      <Typography variant="caption" color="text.secondary">
-                        {t('contact.mapPlaceholder')}
-                      </Typography>
-                    </Box>
-                  </Box>
-                )}
-              </Box>
             </motion.div>
           </Grid>
         </Grid>
+
+        {/* HQ Map & Sales Offices Locations Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <Box id="locations" sx={{ mt: 6 }}>
+            <Grid container spacing={4}>
+              {/* HQ Map Card */}
+              <Grid size={{ xs: 12, md: 6 }}>
+                <Card
+                  sx={(theme) => ({
+                    backgroundColor: alpha(theme.palette.background.paper, 0.6),
+                    backdropFilter: 'blur(16px)',
+                    border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.05)',
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    borderRadius: 3,
+                    overflow: 'hidden',
+                  })}
+                >
+                  <Box sx={{ p: 2.5, borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box>
+                      <Typography variant="h6" fontWeight="bold" color="primary.main">
+                        {isRtl ? activeLocation.project : activeLocation.projectEn}
+                      </Typography>
+                      {activeLocation.isHq && (
+                        <Typography variant="caption" sx={{ color: 'secondary.main', fontWeight: 600, display: 'block', mt: 0.5 }}>
+                          {isRtl ? 'الإدارة العامة' : 'General Administration'}
+                        </Typography>
+                      )}
+                    </Box>
+                    <MapPin size={20} color="#1a365d" />
+                  </Box>
+                  <Box sx={{ flexGrow: 1, minHeight: 400, position: 'relative', bgcolor: 'grey.50' }}>
+                    {isLoadingMap && activeLocation.isHq ? (
+                      <Box
+                        sx={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <Box sx={{ textAlign: 'center' }}>
+                          <MapPin size={32} color="#718096" style={{ margin: '0 auto 8px', display: 'block' }} />
+                          <Typography variant="caption" color="text.secondary">
+                            {isRtl ? 'جاري التحميل...' : 'Loading...'}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    ) : (
+                      <iframe
+                        src={getEmbedUrl()}
+                        width="100%"
+                        height="100%"
+                        style={{ border: 0, display: 'block', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+                        allowFullScreen
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                        title={mapMetaKeywords || t('contact.mapTitle')}
+                      />
+                    )}
+                  </Box>
+                  <Box sx={{ p: 1.5, borderTop: 1, borderColor: 'divider', display: 'flex', justifyContent: 'center', bgcolor: 'rgba(0, 0, 0, 0.02)' }}>
+                    <Box
+                      component="a"
+                      href={activeLocation.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 0.5,
+                        textDecoration: 'none',
+                        color: 'secondary.main',
+                        fontWeight: 600,
+                        fontSize: '0.85rem',
+                        '&:hover': {
+                          textDecoration: 'underline',
+                          opacity: 0.8
+                        }
+                      }}
+                    >
+                      <MapPin size={16} />
+                      <span>{isRtl ? 'فتح في خرائط جوجل للحصول على الاتجاهات ←' : 'Open in Google Maps for directions ←'}</span>
+                    </Box>
+                  </Box>
+                </Card>
+              </Grid>
+
+              {/* Sales Offices Location Card */}
+              <Grid size={{ xs: 12, md: 6 }}>
+                <Card
+                  sx={(theme) => ({
+                    backgroundColor: alpha(theme.palette.background.paper, 0.6),
+                    backdropFilter: 'blur(16px)',
+                    border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.05)',
+                    height: '100%',
+                    borderRadius: 3,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    overflow: 'hidden',
+                  })}
+                >
+                  <Box sx={{ p: 2.5, borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Typography variant="h6" fontWeight="bold" color="primary.main">
+                      {isRtl ? 'مواقع فروع ومكاتب المبيعات' : 'Office & Sales Branch Locations'}
+                    </Typography>
+                    <MapPin size={20} className="text-secondary-main" />
+                  </Box>
+                  <Box sx={{ flexGrow: 1, maxHeight: 440, overflowY: 'auto' }}>
+                    {salesOffices.map((office, idx) => {
+                      const isActive = activeLocation.coords === office.coords
+                      return (
+                        <Box
+                          key={idx}
+                          onClick={() => {
+                            setActiveLocation(office)
+                          }}
+                          sx={(theme) => ({
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            px: 3,
+                            py: 2.2,
+                            borderBottom: idx === salesOffices.length - 1 ? 0 : 1,
+                            borderColor: 'divider',
+                            cursor: 'pointer',
+                            color: 'text.primary',
+                            borderRight: isRtl && isActive ? '4px solid' : 'none',
+                            borderLeft: !isRtl && isActive ? '4px solid' : 'none',
+                            borderRightColor: 'secondary.main',
+                            borderLeftColor: 'secondary.main',
+                            bgcolor: isActive
+                              ? alpha(theme.palette.secondary.main, 0.08)
+                              : idx % 2 === 0
+                              ? 'transparent'
+                              : 'rgba(0,0,0,0.01)',
+                            transition: 'all 0.2s ease',
+                            '&:hover': {
+                              bgcolor: isActive
+                                ? alpha(theme.palette.secondary.main, 0.12)
+                                : 'rgba(201, 162, 39, 0.06)',
+                              '& .project-name': {
+                                color: 'secondary.main',
+                                transform: isRtl ? 'translateX(-4px)' : 'translateX(4px)',
+                              },
+                            },
+                          })}
+                        >
+                          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                            <Typography
+                              className="project-name"
+                              fontWeight={isActive ? 700 : 600}
+                              sx={{
+                                fontSize: '0.95rem',
+                                color: isActive ? 'secondary.main' : 'text.primary',
+                                transition: 'all 0.2s ease-in-out',
+                              }}
+                            >
+                              {isRtl ? office.project : office.projectEn}
+                            </Typography>
+                            {office.isHq && (
+                              <Typography variant="caption" color="text.secondary" fontWeight={500}>
+                                {isRtl ? 'المقر الرئيسي للمجموعة' : 'Company Headquarters'}
+                              </Typography>
+                            )}
+                          </Box>
+                          <Box
+                            component="a"
+                            href={office.dirUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            sx={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 0.5,
+                              color: isActive ? 'secondary.main' : 'text.secondary',
+                              fontWeight: 600,
+                              fontSize: '0.82rem',
+                              textDecoration: 'none',
+                              border: '1px solid',
+                              borderColor: isActive ? 'secondary.main' : 'divider',
+                              borderRadius: 1,
+                              px: 1.5,
+                              py: 0.6,
+                              bgcolor: isActive ? 'rgba(255, 255, 255, 0.8)' : 'transparent',
+                              transition: 'all 0.2s ease-in-out',
+                              '&:hover': {
+                                bgcolor: 'secondary.main',
+                                color: 'white',
+                                borderColor: 'secondary.main',
+                              },
+                            }}
+                          >
+                            <span>
+                              {isRtl ? 'الاتجاهات ←' : 'Directions ←'}
+                            </span>
+                          </Box>
+                        </Box>
+                      )
+                    })}
+                  </Box>
+                </Card>
+              </Grid>
+            </Grid>
+          </Box>
+        </motion.div>
       </Container>
     </Box>
   )

@@ -115,6 +115,7 @@ exports.handler = async (event) => {
         body: JSON.stringify({
           success: true,
           records: queryData.records || [],
+          totalSize: typeof queryData.totalSize === 'number' ? queryData.totalSize : undefined,
         }),
       };
     } catch (error) {

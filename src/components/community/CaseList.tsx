@@ -1,4 +1,5 @@
 import { Card, CardContent, Typography, Chip, Box } from '@mui/material'
+import { alpha } from '@mui/material/styles'
 import { motion } from 'framer-motion'
 import { MessageSquare, Clock, CheckCircle2, AlertCircle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -60,7 +61,14 @@ export default function CaseList({ cases }: { cases: Case[] }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
           >
-            <Card>
+            <Card
+              sx={(theme) => ({
+                backgroundColor: alpha(theme.palette.background.paper, 0.6),
+                backdropFilter: 'blur(16px)',
+                border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.05)',
+              })}
+            >
               <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'start', justifyContent: 'space-between', gap: 2, mb: 1 }}>
                   <Box sx={{ flex: 1, minWidth: 0 }}>

@@ -1,17 +1,41 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
+import { Box } from '@mui/material'
 import Header from './Header'
+import SiteContactBar from './SiteContactBar'
+import Footer from './Footer'
 import BottomNav from './BottomNav'
 import InstallBanner from './InstallBanner'
+import AnimatedBackground from './AnimatedBackground'
+import SaraBot from '../chatbot/SaraBot'
 
 export default function Layout() {
+  const location = useLocation()
+  const isHome = location.pathname === '/'
+
   return (
-    <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+      <AnimatedBackground variant={isHome ? 'geometric' : 'blobs'} />
       <Header />
-      <main style={{ flex: 1 }} className="main-content">
-        <Outlet />
-      </main>
+      <Box
+        component="main"
+        className="main-content"
+        sx={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: 0,
+          pt: isHome ? 0 : { xs: 14, md: 16 },
+        }}
+      >
+        <Box sx={{ flex: 1, minHeight: 0 }}>
+          <Outlet />
+        </Box>
+        <SiteContactBar />
+        <Footer />
+      </Box>
       <BottomNav />
       <InstallBanner />
+      <SaraBot />
     </div>
   )
 }

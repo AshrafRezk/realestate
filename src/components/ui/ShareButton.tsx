@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { IconButton, Menu, MenuItem, ListItemIcon, ListItemText, Tooltip } from '@mui/material'
 import { Share, ContentCopy, Check, WhatsApp, Twitter, Facebook } from '@mui/icons-material'
 import { useToastStore } from '../../lib/store/toast-store'
+import { DEMO_CONFIG } from '../../lib/demo-config'
 
 interface ShareButtonProps {
   url?: string
@@ -13,7 +14,7 @@ interface ShareButtonProps {
 
 export default function ShareButton({
   url = window.location.href,
-  title = 'فيصل بن سعيدان',
+  title = DEMO_CONFIG.brand.nameAr,
   text = 'اكتشف هذه الوحدة',
   image,
   size = 'medium',

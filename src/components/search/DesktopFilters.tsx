@@ -1,16 +1,26 @@
 import { useEffect, useState } from 'react'
-import { Card, CardContent, Typography, TextField, MenuItem, Button, Stack, Box } from '@mui/material'
+import {
+  Card,
+  CardContent,
+  Typography,
+  TextField,
+  MenuItem,
+  Button,
+  Stack,
+  Box,
+} from '@mui/material'
+import { alpha } from '@mui/material/styles'
 import { Refresh } from '@mui/icons-material'
 import { useTranslation } from 'react-i18next'
 import { useAppStore } from '../../lib/store'
 import { getProjects } from '../../lib/api-client'
-import { Project, Phase } from '../../lib/types'
+import { UNIT_MODEL_OPTIONS } from '../../lib/constants/unitModels'
+import { Project } from '../../lib/types'
 
 export default function DesktopFilters() {
   const { t, i18n } = useTranslation()
   const { filters, setFilters, clearFilters } = useAppStore()
   const [projects, setProjects] = useState<Project[]>([])
-  const [phases, setPhases] = useState<Phase[]>([])
 
   useEffect(() => {
     async function loadProjects() {
@@ -22,15 +32,6 @@ export default function DesktopFilters() {
     loadProjects()
   }, [])
 
-  useEffect(() => {
-    if (filters.projectId) {
-      const project = projects.find((p) => p.id === filters.projectId)
-      setPhases(project?.phases || [])
-    } else {
-      setPhases([])
-    }
-  }, [filters.projectId, projects])
-
   const bedroomOptions = [
     { value: '', label: t('search.options.all') },
     { value: '1', label: t('search.options.oneRoom') },
@@ -40,34 +41,30 @@ export default function DesktopFilters() {
     { value: '5', label: t('search.options.fivePlusRooms') },
   ]
 
-  const statusOptions = [
-    { value: '', label: t('search.options.all') },
-    { value: 'Available', label: t('search.options.available') },
-    { value: 'Reserved', label: t('search.options.reserved') },
-    { value: 'Sold', label: t('search.options.sold') },
-  ]
-
-  const yearOptions = [
-    { value: '', label: t('search.options.all') },
-    { value: '2025', label: '2025' },
-    { value: '2026', label: '2026' },
-    { value: '2027', label: '2027' },
-  ]
-
   const projectOptions = [
     { value: '', label: t('search.options.allProjects') },
     ...projects.map((p) => ({ value: p.id, label: i18n.language.startsWith('ar') ? p.nameAr : p.name })),
   ]
 
-  const phaseOptions = [
-    { value: '', label: t('search.options.allPhases') },
-    ...phases.map((p) => ({ value: p.id, label: i18n.language.startsWith('ar') ? p.nameAr : p.name })),
+  const modelOptions = [
+    { value: '', label: t('search.options.all') },
+    ...UNIT_MODEL_OPTIONS.map((m) => ({ value: m, label: m })),
   ]
 
-  const hasActiveFilters = Object.values(filters).some((v) => v !== undefined)
+  const hasActiveFilters = Object.entries(filters).some(
+    ([key, value]) =>
+      value !== undefined && value !== false && key !== 'page' && key !== 'pageSize'
+  )
 
   return (
-    <Card>
+    <Card
+      sx={(theme) => ({
+        backgroundColor: alpha(theme.palette.background.paper, 0.6),
+        backdropFilter: 'blur(16px)',
+        border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.05)',
+      })}
+    >
       <CardContent>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
           <Typography variant="h6" fontWeight="semibold">
@@ -94,7 +91,7 @@ export default function DesktopFilters() {
               setFilters({
                 ...filters,
                 projectId: e.target.value || undefined,
-                phaseId: undefined,
+                page: 1,
               })
             }
             fullWidth
@@ -106,21 +103,25 @@ export default function DesktopFilters() {
             ))}
           </TextField>
 
-          {filters.projectId && (
-            <TextField
-              select
-              label={t('search.phase')}
-              value={filters.phaseId || ''}
-              onChange={(e) => setFilters({ ...filters, phaseId: e.target.value || undefined })}
-              fullWidth
-            >
-              {phaseOptions.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-          )}
+          <TextField
+            select
+            label={t('search.model')}
+            value={filters.model || ''}
+            onChange={(e) =>
+              setFilters({
+                ...filters,
+                model: e.target.value || undefined,
+                page: 1,
+              })
+            }
+            fullWidth
+          >
+            {modelOptions.map((option) => (
+              <MenuItem key={option.value || 'all'} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </TextField>
 
           <TextField
             select
@@ -130,6 +131,7 @@ export default function DesktopFilters() {
               setFilters({
                 ...filters,
                 bedrooms: e.target.value ? parseInt(e.target.value) : undefined,
+                page: 1,
               })
             }
             fullWidth
@@ -140,47 +142,8 @@ export default function DesktopFilters() {
               </MenuItem>
             ))}
           </TextField>
-
-          <TextField
-            select
-            label={t('search.status')}
-            value={filters.status || ''}
-            onChange={(e) =>
-              setFilters({
-                ...filters,
-                status: (e.target.value as 'Available' | 'Reserved' | 'Sold') || undefined,
-              })
-            }
-            fullWidth
-          >
-            {statusOptions.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </TextField>
-
-          <TextField
-            select
-            label={t('search.deliveryYear')}
-            value={filters.deliveryYear?.toString() || ''}
-            onChange={(e) =>
-              setFilters({
-                ...filters,
-                deliveryYear: e.target.value ? parseInt(e.target.value) : undefined,
-              })
-            }
-            fullWidth
-          >
-            {yearOptions.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </TextField>
         </Stack>
       </CardContent>
     </Card>
   )
 }
-

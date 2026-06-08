@@ -31,7 +31,7 @@ export const mockContacts: Contact[] = [
     passwordHash: DEMO_PASSWORD_HASH,
     firstName: "Demo",
     lastName: "User",
-    email: "demo@binsaedan.com",
+    email: "demo@cloudestate.com",
     phone: "+966500000000",
     ownedUnits: ["unit-1", "unit-5", "unit-8"],
   },

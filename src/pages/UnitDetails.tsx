@@ -9,32 +9,45 @@ import {
   CardContent,
   Grid,
   Chip,
-  Paper,
   CircularProgress,
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
 } from '@mui/material'
-import { ArrowRight, Bed, Bath, Maximize, Calendar, Check } from 'lucide-react'
+import { alpha } from '@mui/material/styles'
+import { ArrowRight, Check } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import UnitCard from '../components/search/UnitCard'
 import RegisterInterestModal from '../components/home/RegisterInterestModal'
-import ImageGallery from '../components/ui/ImageGallery'
 import ImageCarousel from '../components/ui/ImageCarousel'
 import FavoriteButton from '../components/ui/FavoriteButton'
 import ShareButton from '../components/ui/ShareButton'
 import { getUnit } from '../lib/api-client'
-import { useAuthStore } from '../lib/store'
-import { Unit } from '../lib/types'
+import { isModelImageFile, isModelPdfFile } from '../lib/projectMedia'
+import { useAuthStore, useFeatureSwitchStore } from '../lib/store'
+import { Unit, ProjectModelFile } from '../lib/types'
+import ProjectModelViewer from '../components/project/ProjectModelViewer'
+import ProjectBrochureViewer from '../components/project/ProjectBrochureViewer'
+import SubsidyBadges from '../components/units/SubsidyBadges'
+import CurrencyIcon from '../components/ui/CurrencyIcon'
+import FinanceCalculatorModal, { SakaniMathIcon } from '../components/ui/FinanceCalculatorModal'
 
 export default function UnitDetails() {
   const { t, i18n } = useTranslation()
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { user } = useAuthStore()
+  const { getFeature } = useFeatureSwitchStore()
   const [unit, setUnit] = useState<Unit | null>(null)
   const [relatedUnits, setRelatedUnits] = useState<Unit[]>([])
+  const [modelFile, setModelFile] = useState<ProjectModelFile | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false)
+  const [isCalculatorOpen, setIsCalculatorOpen] = useState(false)
   const [isGalleryOpen, setIsGalleryOpen] = useState(false)
+  const [modelViewerOpen, setModelViewerOpen] = useState(false)
 
   useEffect(() => {
     async function loadUnit() {
@@ -45,6 +58,7 @@ export default function UnitDetails() {
         if (response.success && response.data) {
           setUnit(response.data.unit)
           setRelatedUnits(response.data.relatedUnits)
+          setModelFile(response.data.modelFile ?? null)
         }
       } catch (error) {
         console.error('Error loading unit:', error)
@@ -56,20 +70,23 @@ export default function UnitDetails() {
   }, [id])
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat(i18n.language === 'ar' ? 'ar-SA' : 'en-US', {
-      style: 'currency',
-      currency: 'SAR',
+    const formatted = new Intl.NumberFormat(i18n.language === 'ar' ? 'ar-SA' : 'en-US', {
+      style: 'decimal',
       maximumFractionDigits: 0,
     }).format(price)
+    return (
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        {formatted}
+        <CurrencyIcon theme="light" className="mx-2" />
+      </Box>
+    )
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString(i18n.language === 'ar' ? 'ar-SA' : 'en-US', {
-      year: 'numeric',
-      month: 'long',
-    })
+  const STATS_ICONS: Record<string, string> = {
+    bed: 'bed',
+    bathtub: 'bathtub',
+    area: 'square_foot',
   }
-
 
   if (isLoading) {
     return (
@@ -83,427 +100,526 @@ export default function UnitDetails() {
     return (
       <Container maxWidth="md" sx={{ py: 8, textAlign: 'center' }}>
         <Typography variant="h5" gutterBottom>
-          الوحدة غير موجودة
+          {i18n.language === 'ar' ? 'الوحدة غير موجودة' : 'Unit not found'}
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-          عذراً، لم نتمكن من العثور على هذه الوحدة
+          {i18n.language === 'ar' ? 'عذراً، لم نتمكن من العثور على هذه الوحدة' : 'Sorry, we couldn\'t find this unit'}
         </Typography>
         <Button variant="contained" onClick={() => navigate('/search')}>
-          العودة للبحث
+          {i18n.language === 'ar' ? 'العودة للبحث' : 'Back to search'}
         </Button>
       </Container>
     )
   }
 
-  const statusColors: Record<Unit['status'], 'success' | 'warning' | 'error'> = {
+  const statusColors: Partial<Record<Unit['status'], 'success' | 'warning' | 'error'>> = {
     Available: 'success',
     Reserved: 'warning',
     Sold: 'error',
   }
 
-  const statusLabels: Record<Unit['status'], string> = {
-    Available: 'متاح',
-    Reserved: 'محجوز',
-    Sold: 'مباع',
+  const statusLabels: Partial<Record<Unit['status'], string>> = {
+    Available: i18n.language === 'ar' ? 'متاح' : 'Available',
+    Reserved: i18n.language === 'ar' ? 'محجوز' : 'Reserved',
+    Sold: i18n.language === 'ar' ? 'مباع' : 'Sold',
   }
 
+  const mainImage = unit.images?.[0] || ''
+  const secondaryImages = unit.images?.slice(1, 3) || []
+
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-      {/* Back Button */}
-      <Paper
+    <Box sx={{ minHeight: '100vh', bgcolor: '#f7f9fb' }}>
+      {/* Top Bar */}
+      <Box
         sx={{
+          bgcolor: '#003527',
+          borderBottom: '1px solid rgba(212,175,55,0.2)',
           position: 'sticky',
-          top: 64,
-          zIndex: 30,
-          borderBottom: 1,
-          borderColor: 'divider',
+          top: 0,
+          zIndex: 50,
         }}
       >
-        <Container maxWidth="lg" sx={{ py: 1 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Button
-              startIcon={<ArrowRight />}
-              onClick={() => navigate(-1)}
-              sx={{ color: 'text.secondary' }}
-            >
-              رجوع
-            </Button>
-            <Box sx={{ display: 'flex', gap: 0.5 }}>
-              <FavoriteButton unitId={unit.id} size="small" />
-              <ShareButton
-                url={`${window.location.origin}/unit/${unit.id}`}
-                title={unit.projectNameAr}
-                text={`اكتشف ${unit.unitNumber} في ${unit.projectNameAr}`}
-                image={unit.images[0]}
-                size="small"
-              />
-            </Box>
+        <Container maxWidth="lg" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', py: 1.5 }}>
+          <Button
+            startIcon={<ArrowRight />}
+            onClick={() => navigate(-1)}
+            sx={{ color: '#d4af37', fontFamily: '"Inter", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600 }}
+          >
+            {i18n.language === 'ar' ? 'رجوع' : 'BACK'}
+          </Button>
+          <Box sx={{ display: 'flex', gap: 0.5 }}>
+            <FavoriteButton unitId={unit.id} size="small" />
+            <ShareButton
+              url={`${window.location.origin}/unit/${unit.id}`}
+              title={unit.projectName}
+              text={`${unit.unitNumber} at ${unit.projectName}`}
+              image={unit.images[0]}
+              size="small"
+            />
           </Box>
         </Container>
-      </Paper>
+      </Box>
 
-      <Container maxWidth="lg">
-        {/* Image Carousel */}
+      {/* Hero Gallery Grid */}
+      <Box sx={{ maxWidth: 1440, mx: 'auto', px: { xs: 2, md: 5 }, py: { xs: 2, md: 3 } }}>
         <Box
           sx={{
-            position: 'relative',
-            mb: 4,
-            mt: 2,
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', md: '8fr 4fr' },
+            gap: 1,
+            height: { md: 600 },
           }}
         >
           <Box
             onClick={() => setIsGalleryOpen(true)}
-            sx={{
-              cursor: 'pointer',
-              '&:hover .carousel-overlay': {
-                opacity: 1,
-              },
-            }}
+            sx={{ overflow: 'hidden', position: 'relative', cursor: 'pointer', '&:hover img': { transform: 'scale(1.05)' } }}
           >
-            <ImageCarousel images={unit.images} height={{ xs: '50vh', md: '65vh' }} />
             <Box
-              className="carousel-overlay"
+              component="img"
+              src={mainImage || '/placeholder.jpg'}
+              alt="Main"
+              sx={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.7s' }}
+            />
+            <Box
               sx={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                bgcolor: 'rgba(0, 0, 0, 0.1)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                opacity: 0,
-                transition: 'opacity 0.3s ease',
-                zIndex: 1,
-                pointerEvents: 'none',
-                borderRadius: { xs: 0, md: 2 },
+                position: 'absolute', bottom: 24, left: 24,
+                bgcolor: 'rgba(0,53,39,0.1)',
+                backdropFilter: 'blur(20px)',
+                p: 3,
+                border: '1px solid rgba(212,175,55,0.3)',
               }}
             >
-              <Typography
-                variant="body1"
-                sx={{
-                  color: 'white',
-                  fontWeight: 600,
-                  textShadow: '0 2px 8px rgba(0, 0, 0, 0.5)',
-                  bgcolor: 'rgba(0, 0, 0, 0.5)',
-                  px: 3,
-                  py: 1.5,
-                  borderRadius: 2,
-                }}
-              >
-                {i18n.language === 'ar' ? 'انقر لعرض المعرض' : 'Click to view gallery'}
+              <Typography sx={{ color: '#d4af37', fontFamily: '"Inter", sans-serif', fontSize: 14, letterSpacing: '0.1em', fontWeight: 600, textTransform: 'uppercase' }}>
+                {unit.projectName || 'Luxury Property'}
               </Typography>
             </Box>
-          </Box>
-          <Chip
-            label={statusLabels[unit.status]}
-            color={statusColors[unit.status]}
-            sx={{
-              position: 'absolute',
-              top: { xs: 16, md: 20 },
-              left: { xs: 16, md: 20 },
-              zIndex: 4,
-              fontWeight: 600,
-              fontSize: { xs: '0.75rem', md: '0.875rem' },
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
-            }}
-          />
-        </Box>
-
-        {/* Content */}
-        <Box sx={{ px: { xs: 2, md: 0 }, pb: 6 }}>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-          >
-            {/* Header */}
-            <Box sx={{ mb: 3 }}>
-              <Chip
-                label={unit.unitNumber}
-                sx={{
-                  mb: 2,
-                  fontWeight: 600,
-                  fontSize: '0.875rem',
-                  height: 32,
-                }}
-              />
-              <Typography
-                variant="h3"
-                fontWeight="bold"
-                color="primary.main"
-                sx={{ mb: 1, fontSize: { xs: '2rem', md: '2.5rem' } }}
-              >
-                {formatPrice(unit.price)}
-              </Typography>
-              <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 400 }}>
-                {unit.projectNameAr} • {unit.phaseNameAr}
-              </Typography>
-            </Box>
-
-            {/* Specs Grid */}
-            <Card
-              sx={{
-                mb: 4,
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-                borderRadius: 2,
-              }}
-            >
-              <CardContent sx={{ p: { xs: 2, md: 3 } }}>
-                <Grid container spacing={3}>
-                  <Grid size={{ xs: 6, md: 3 }}>
-                    <Box
-                      sx={{
-                        textAlign: 'center',
-                        p: 2,
-                        borderRadius: 2,
-                        bgcolor: 'grey.50',
-                        transition: 'all 0.2s',
-                        '&:hover': {
-                          bgcolor: 'grey.100',
-                          transform: 'translateY(-2px)',
-                        },
-                      }}
-                    >
-                      <Bed size={28} color="#1a365d" style={{ margin: '0 auto 12px', display: 'block' }} />
-                      <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 0.5 }}>
-                        {t('unit.bedroomsLabel')}
-                      </Typography>
-                      <Typography variant="h5" fontWeight="bold" color="primary.main">
-                        {unit.bedrooms}
-                      </Typography>
-                    </Box>
-                  </Grid>
-                  {unit.bathrooms && (
-                    <Grid size={{ xs: 6, md: 3 }}>
-                      <Box
-                        sx={{
-                          textAlign: 'center',
-                          p: 2,
-                          borderRadius: 2,
-                          bgcolor: 'grey.50',
-                          transition: 'all 0.2s',
-                          '&:hover': {
-                            bgcolor: 'grey.100',
-                            transform: 'translateY(-2px)',
-                          },
-                        }}
-                      >
-                        <Bath size={28} color="#1a365d" style={{ margin: '0 auto 12px', display: 'block' }} />
-                        <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 0.5 }}>
-                          {t('unit.bathroomsLabel')}
-                        </Typography>
-                        <Typography variant="h5" fontWeight="bold" color="primary.main">
-                          {unit.bathrooms}
-                        </Typography>
-                      </Box>
-                    </Grid>
-                  )}
-                  <Grid size={{ xs: 6, md: 3 }}>
-                    <Box
-                      sx={{
-                        textAlign: 'center',
-                        p: 2,
-                        borderRadius: 2,
-                        bgcolor: 'grey.50',
-                        transition: 'all 0.2s',
-                        '&:hover': {
-                          bgcolor: 'grey.100',
-                          transform: 'translateY(-2px)',
-                        },
-                      }}
-                    >
-                      <Maximize size={28} color="#1a365d" style={{ margin: '0 auto 12px', display: 'block' }} />
-                      <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 0.5 }}>
-                        {t('unit.areaLabel')}
-                      </Typography>
-                      <Typography variant="h5" fontWeight="bold" color="primary.main">
-                        {unit.area} {t('unit.areaUnit')}
-                      </Typography>
-                    </Box>
-                  </Grid>
-                  <Grid size={{ xs: 6, md: 3 }}>
-                    <Box
-                      sx={{
-                        textAlign: 'center',
-                        p: 2,
-                        borderRadius: 2,
-                        bgcolor: 'grey.50',
-                        transition: 'all 0.2s',
-                        '&:hover': {
-                          bgcolor: 'grey.100',
-                          transform: 'translateY(-2px)',
-                        },
-                      }}
-                    >
-                      <Calendar size={28} color="#1a365d" style={{ margin: '0 auto 12px', display: 'block' }} />
-                      <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 0.5 }}>
-                        {t('unit.deliveryLabel')}
-                      </Typography>
-                      <Typography variant="h5" fontWeight="bold" color="primary.main">
-                        {formatDate(unit.deliveryDate)}
-                      </Typography>
-                    </Box>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-
-            {/* Description */}
-            {(i18n.language === 'ar' ? unit.descriptionAr : unit.description) && (
-              <Box sx={{ mb: 4 }}>
-                <Typography variant="h6" fontWeight="semibold" gutterBottom sx={{ mb: 2 }}>
-                  {t('unit.description')}
-                </Typography>
-                <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.8 }}>
-                  {i18n.language === 'ar' ? unit.descriptionAr : unit.description}
-                </Typography>
+            <Chip
+              label={statusLabels[unit.status] || unit.status}
+              color={statusColors[unit.status] || 'warning'}
+              sx={{ position: 'absolute', top: 16, right: 16, zIndex: 4, fontWeight: 600 }}
+            />
+            {unit.eligibleForSubsidies && (
+              <Box sx={{ position: 'absolute', top: 16, left: 16, zIndex: 4 }}>
+                <SubsidyBadges eligible={unit.eligibleForSubsidies} size="large" />
               </Box>
             )}
-
-            {/* Floor Plan */}
-            {unit.floorPlan && (
-              <Box sx={{ mb: 4 }}>
-                <Typography variant="h6" fontWeight="semibold" gutterBottom sx={{ mb: 2 }}>
-                  {i18n.language === 'ar' ? 'الخريطة' : 'Floor Plan'}
-                </Typography>
-                <Card>
+          </Box>
+          <Box sx={{ display: { xs: 'none', md: 'grid' }, gridTemplateRows: '1fr 1fr', gap: 1 }}>
+            {secondaryImages.length > 0 ? (
+              secondaryImages.map((img, i) => (
+                <Box
+                  key={i}
+                  onClick={() => setIsGalleryOpen(true)}
+                  sx={{ overflow: 'hidden', cursor: 'pointer', '&:hover img': { transform: 'scale(1.05)' } }}
+                >
                   <Box
                     component="img"
-                    src={unit.floorPlan}
-                    alt="Floor Plan"
-                    sx={{
-                      width: '100%',
-                      height: 'auto',
-                      display: 'block',
-                    }}
+                    src={img}
+                    alt={`View ${i + 1}`}
+                    sx={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.7s' }}
                   />
-                </Card>
+                </Box>
+              ))
+            ) : (
+              <>
+                <Box sx={{ bgcolor: '#e0e3e5' }} />
+                <Box sx={{ bgcolor: '#e0e3e5' }} />
+              </>
+            )}
+          </Box>
+        </Box>
+      </Box>
+
+      {/* Pricing & Stats Bar */}
+      <Box
+        sx={{
+          bgcolor: '#003527',
+          borderTop: '1px solid rgba(212,175,55,0.2)',
+          borderBottom: '1px solid rgba(212,175,55,0.2)',
+          position: 'sticky',
+          top: 56,
+          zIndex: 40,
+        }}
+      >
+        <Box
+          sx={{
+            maxWidth: 1440,
+            mx: 'auto',
+            px: { xs: 2, md: 5 },
+            py: { xs: 2, md: 2.5 },
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 2,
+          }}
+        >
+          <Box>
+            <Typography sx={{ color: 'rgba(212,175,55,0.7)', fontFamily: '"Inter", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 500, textTransform: 'uppercase' }}>
+              {i18n.language === 'ar' ? 'القيمة الاستثمارية' : 'Investment Value'}
+            </Typography>
+            <Typography sx={{ color: '#d4af37', fontFamily: '"EB Garamond", serif', fontSize: { xs: 28, md: 36 }, fontWeight: 500 }}>
+              {formatPrice(unit.price)}
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', gap: { xs: 3, md: 5 }, overflowX: 'auto', pb: 0.5 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Typography sx={{ fontFamily: '"Inter", sans-serif', color: '#d4af37', fontSize: { xs: 24, md: 32 }, fontWeight: 300 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 'inherit' }}>bed</span>
+              </Typography>
+              <Box>
+                <Typography sx={{ color: '#ffffff', fontFamily: '"EB Garamond", serif', fontSize: { xs: 20, md: 28 }, fontWeight: 500, lineHeight: 1 }}>
+                  {String(unit.bedrooms).padStart(2, '0')}
+                </Typography>
+                <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontFamily: '"Inter", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 500, textTransform: 'uppercase' }}>
+                  {i18n.language === 'ar' ? 'غرف نوم' : 'Bedrooms'}
+                </Typography>
+              </Box>
+            </Box>
+            {unit.bathrooms && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Typography sx={{ fontFamily: '"Inter", sans-serif', color: '#d4af37', fontSize: { xs: 24, md: 32 }, fontWeight: 300 }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 'inherit' }}>bathtub</span>
+                </Typography>
+                <Box>
+                  <Typography sx={{ color: '#ffffff', fontFamily: '"EB Garamond", serif', fontSize: { xs: 20, md: 28 }, fontWeight: 500, lineHeight: 1 }}>
+                    {String(unit.bathrooms).padStart(2, '0')}
+                  </Typography>
+                  <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontFamily: '"Inter", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 500, textTransform: 'uppercase' }}>
+                    {i18n.language === 'ar' ? 'حمامات' : 'Bathrooms'}
+                  </Typography>
+                </Box>
               </Box>
             )}
-
-            {/* 3D View */}
-            {unit.sketchupEmbedUrl && (
-              <Box sx={{ mb: 4 }}>
-                <Typography variant="h6" fontWeight="semibold" gutterBottom sx={{ mb: 2 }}>
-                  {i18n.language === 'ar' ? 'عرض ثلاثي الأبعاد' : '3D View'}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Typography sx={{ fontFamily: '"Inter", sans-serif', color: '#d4af37', fontSize: { xs: 24, md: 32 }, fontWeight: 300 }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 'inherit' }}>square_foot</span>
+              </Typography>
+              <Box>
+                <Typography sx={{ color: '#ffffff', fontFamily: '"EB Garamond", serif', fontSize: { xs: 20, md: 28 }, fontWeight: 500, lineHeight: 1 }}>
+                  {unit.area ? Math.round(unit.area).toLocaleString() : '—'}
                 </Typography>
-                <Card>
-                  <Box
-                    sx={{
-                      position: 'relative',
-                      width: '100%',
-                      paddingBottom: '56.25%', // 16:9 aspect ratio
-                      overflow: 'hidden',
-                      bgcolor: 'grey.100',
-                    }}
-                  >
-                    <Box
-                      component="iframe"
-                      src={unit.sketchupEmbedUrl}
-                      sx={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        border: 'none',
-                        display: 'block',
-                      }}
-                      allowFullScreen
-                      title="3D Unit View"
-                    />
-                  </Box>
-                </Card>
+                <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontFamily: '"Inter", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 500, textTransform: 'uppercase' }}>
+                  {i18n.language === 'ar' ? 'مساحة' : 'Sq Ft'}
+                </Typography>
               </Box>
-            )}
+            </Box>
+          </Box>
+        </Box>
+      </Box>
 
-            {/* Amenities */}
-            {unit.amenities && unit.amenities.length > 0 && (
-              <Box sx={{ mb: 4 }}>
-                <Typography variant="h6" fontWeight="semibold" gutterBottom sx={{ mb: 3 }}>
-                  {i18n.language === 'ar' ? 'المرافق' : 'Amenities'}
+      <Container maxWidth="lg" sx={{ mt: { xs: 3, md: 6 }, mb: 10 }}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '7fr 5fr' }, gap: { xs: 4, md: 6 } }}>
+          {/* Left Column */}
+          <Box>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+              {/* Description */}
+              <Box sx={{ mb: { xs: 4, md: 6 } }}>
+                <Typography variant="h2" sx={{ mb: 2 }}>
+                  {i18n.language === 'ar' ? 'نبذة عن العقار' : 'Property Overview'}
                 </Typography>
-                <Grid container spacing={2}>
-                  {unit.amenities.map((amenity, index) => (
-                    <Grid size={{ xs: 12, sm: 6, md: 4 }} key={index}>
+                <Box sx={{ width: 96, height: 4, bgcolor: '#d4af37', mb: 3 }} />
+                <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.8, fontSize: 18 }}>
+                  {i18n.language === 'ar' ? unit.descriptionAr : unit.description || 'Experience luxury living at its finest in this exceptional property.'}
+                </Typography>
+              </Box>
+
+              {/* Amenity Bento Grid */}
+              {unit.amenities && unit.amenities.length > 0 && (
+                <Box sx={{ mb: { xs: 4, md: 6 } }}>
+                  <Typography variant="h3" sx={{ mb: 3 }}>
+                    {i18n.language === 'ar' ? 'المرافق' : 'Amenities & Features'}
+                  </Typography>
+                  <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 2 }}>
+                    {unit.amenities.map((amenity, index) => (
                       <Box
+                        key={index}
                         sx={{
+                          bgcolor: '#eceef0',
+                          border: '1px solid rgba(212,175,55,0.1)',
+                          p: 4,
                           display: 'flex',
+                          flexDirection: 'column',
                           alignItems: 'center',
+                          justifyContent: 'center',
+                          textAlign: 'center',
                           gap: 1.5,
-                          p: 1.5,
-                          borderRadius: 1,
-                          bgcolor: 'grey.50',
-                          border: '1px solid',
-                          borderColor: 'grey.200',
+                          transition: 'all 0.3s',
+                          '&:hover': { bgcolor: '#003527', '& .amenity-label': { color: '#ffffff' }, '& .amenity-icon': { color: '#d4af37' } },
                         }}
                       >
-                        <Check size={20} color="#1a365d" style={{ flexShrink: 0 }} />
-                        <Typography variant="body2" color="text.primary">
+                        <Check size={24} className="amenity-icon" style={{ color: '#003527', transition: 'color 0.3s' }} />
+                        <Typography className="amenity-label" sx={{ fontFamily: '"Inter", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600, textTransform: 'uppercase', transition: 'color 0.3s' }}>
                           {amenity}
                         </Typography>
                       </Box>
-                    </Grid>
-                  ))}
-                </Grid>
-              </Box>
-            )}
-
-            {/* CTAs */}
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, mb: 4, mt: 4 }}>
-              <Button
-                variant="contained"
-                size="large"
-                fullWidth
-                onClick={() => setIsRegisterModalOpen(true)}
-                disabled={unit.status === 'Sold'}
-                sx={{
-                  py: 1.5,
-                  fontSize: '1.1rem',
-                  fontWeight: 'semibold',
-                }}
-              >
-                {unit.status === 'Sold' ? t('unit.sold') : t('unit.registerInterest')}
-              </Button>
-              {user && (
-                <Button component={Link} to="/community" variant="outlined" size="large" fullWidth>
-                  {t('unit.openSupportCase')}
-                </Button>
+                    ))}
+                  </Box>
+                </Box>
               )}
-            </Box>
 
-            {/* Related Units */}
-            {relatedUnits.length > 0 && (
-              <Box>
-                <Typography variant="h6" fontWeight="semibold" gutterBottom>
-                  {t('unit.similarUnits')}
+              {/* Model Layout */}
+              {modelFile && (
+                <Box sx={{ mb: 4 }}>
+                  <Typography variant="h3" sx={{ mb: 2 }}>
+                    {t('unit.modelLayout', 'Unit Model Layout')}
+                    {unit.model && (
+                      <Typography component="span" variant="body2" color="text.secondary" sx={{ ml: 1 }}>
+                        ({unit.model})
+                      </Typography>
+                    )}
+                  </Typography>
+                  <Card
+                    onClick={() => setModelViewerOpen(true)}
+                    sx={{
+                      overflow: 'hidden',
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+                      transition: 'box-shadow 0.2s, transform 0.2s',
+                      '&:hover': { boxShadow: '0 8px 24px rgba(0,0,0,0.12)', transform: 'translateY(-2px)' },
+                    }}
+                  >
+                    {isModelPdfFile(modelFile.fileExtension) ? (
+                      <Box sx={{ height: { xs: 320, md: 420 }, bgcolor: '#1a1a1a', pointerEvents: 'none' }}>
+                        <ProjectBrochureViewer pdfUrl={modelFile.url} />
+                      </Box>
+                    ) : isModelImageFile(modelFile.fileExtension) ? (
+                      <Box
+                        component="img"
+                        src={modelFile.url}
+                        alt={modelFile.title}
+                        sx={{ width: '100%', display: 'block', maxHeight: 480, objectFit: 'contain', bgcolor: '#f0f0f0', pointerEvents: 'none' }}
+                      />
+                    ) : (
+                      <Box sx={{ p: 3, textAlign: 'center' }}>
+                        <Typography variant="body2" color="text.secondary">
+                          {t('project.clickToEnlarge', 'Click to enlarge')}
+                        </Typography>
+                      </Box>
+                    )}
+                  </Card>
+                </Box>
+              )}
+
+              {/* Floor Plan */}
+              {unit.floorPlan && (
+                <Box sx={{ mb: 4 }}>
+                  <Typography variant="h3" sx={{ mb: 2 }}>
+                    {i18n.language === 'ar' ? 'المخطط' : 'Floor Plan'}
+                  </Typography>
+                  <Card>
+                    <Box component="img" src={unit.floorPlan} alt="Floor Plan" sx={{ width: '100%', height: 'auto', display: 'block' }} />
+                  </Card>
+                </Box>
+              )}
+
+              {/* 3D View */}
+              {unit.sketchupEmbedUrl && (
+                <Box sx={{ mb: 4 }}>
+                  <Typography variant="h3" sx={{ mb: 2 }}>
+                    {i18n.language === 'ar' ? 'عرض ثلاثي الأبعاد' : '3D View'}
+                  </Typography>
+                  <Card>
+                    <Box sx={{ position: 'relative', width: '100%', paddingBottom: '56.25%', overflow: 'hidden', bgcolor: '#f0f0f0' }}>
+                      <Box
+                        component="iframe"
+                        src={unit.sketchupEmbedUrl}
+                        sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none', display: 'block' }}
+                        allowFullScreen
+                        title="3D Unit View"
+                      />
+                    </Box>
+                  </Card>
+                </Box>
+              )}
+            </motion.div>
+          </Box>
+
+          {/* Right Column — Sidebar Form */}
+          <Box>
+            <Box sx={{ position: 'sticky', top: 130 }}>
+              <Box sx={{ bgcolor: '#003527', p: { xs: 3, md: 4 }, border: '1px solid rgba(212,175,55,0.3)' }}>
+                <Typography sx={{ color: '#d4af37', fontFamily: '"EB Garamond", serif', fontSize: 24, fontWeight: 500, mb: 1 }}>
+                  {i18n.language === 'ar' ? 'طلب محفظة استثمارية' : 'Request Private Portfolio'}
                 </Typography>
-                <Grid container spacing={2}>
-                  {relatedUnits.map((relatedUnit) => (
-                    <Grid size={{ xs: 12, sm: 6 }} key={relatedUnit.id}>
-                      <UnitCard unit={relatedUnit} />
-                    </Grid>
-                  ))}
-                </Grid>
+                <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontFamily: '"Inter", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 500, textTransform: 'uppercase', mb: 3 }}>
+                  {i18n.language === 'ar' ? 'استفسار سري للمستثمرين المعتمدين فقط' : 'Confidential inquiry for qualified investors only.'}
+                </Typography>
+
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <TextField
+                    placeholder={i18n.language === 'ar' ? 'الاسم الكامل...' : 'Full legal name...'}
+                    variant="standard"
+                    slotProps={{
+                      input: {
+                        disableUnderline: true,
+                        sx: { color: '#ffffff', px: 0, py: 1, fontSize: 14, '&::placeholder': { color: 'rgba(255,255,255,0.4)', opacity: 1 } },
+                      },
+                    }}
+                    sx={{ borderBottom: '1px solid rgba(255,255,255,0.2)', '&:focus-within': { borderBottomColor: '#d4af37' } }}
+                  />
+                  <TextField
+                    placeholder={i18n.language === 'ar' ? 'البريد الإلكتروني...' : 'Email address...'}
+                    variant="standard"
+                    slotProps={{
+                      input: {
+                        disableUnderline: true,
+                        sx: { color: '#ffffff', px: 0, py: 1, fontSize: 14, '&::placeholder': { color: 'rgba(255,255,255,0.4)', opacity: 1 } },
+                      },
+                    }}
+                    sx={{ borderBottom: '1px solid rgba(255,255,255,0.2)', '&:focus-within': { borderBottomColor: '#d4af37' } }}
+                  />
+                  <FormControl variant="standard" sx={{ borderBottom: '1px solid rgba(255,255,255,0.2)' }}>
+                    <Select
+                      defaultValue="Middle East & GCC"
+                      disableUnderline
+                      slotProps={{
+                        root: { sx: { color: '#ffffff', fontSize: 14, py: 1, '& .MuiSvgIcon-root': { color: '#d4af37' } } },
+                      }}
+                    >
+                      <MenuItem value="Middle East & GCC">Middle East & GCC</MenuItem>
+                      <MenuItem value="Europe">Europe</MenuItem>
+                      <MenuItem value="North America">North America</MenuItem>
+                      <MenuItem value="Asia Pacific">Asia Pacific</MenuItem>
+                    </Select>
+                  </FormControl>
+
+                  <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
+                    <Box
+                      sx={{ px: 3, py: 1, border: '1px solid rgba(212,175,55,0.3)', cursor: 'pointer', transition: 'all 0.2s', '&:hover': { bgcolor: '#d4af37', '& .type-label': { color: '#003527' } } }}
+                    >
+                      <Typography className="type-label" sx={{ color: '#d4af37', fontFamily: '"Inter", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600, textTransform: 'uppercase', transition: 'color 0.2s' }}>
+                        {i18n.language === 'ar' ? 'استثمار' : 'Investment'}
+                      </Typography>
+                    </Box>
+                    <Box
+                      sx={{ px: 3, py: 1, border: '1px solid rgba(212,175,55,0.3)', cursor: 'pointer', transition: 'all 0.2s', '&:hover': { bgcolor: '#d4af37', '& .type-label': { color: '#003527' } } }}
+                    >
+                      <Typography className="type-label" sx={{ color: '#d4af37', fontFamily: '"Inter", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600, textTransform: 'uppercase', transition: 'color 0.2s' }}>
+                        {i18n.language === 'ar' ? 'سكن' : 'Residence'}
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  <Button
+                    fullWidth
+                    sx={{
+                      bgcolor: '#d4af37',
+                      color: '#003527',
+                      fontFamily: '"Inter", sans-serif',
+                      fontSize: 14,
+                      letterSpacing: '0.2em',
+                      fontWeight: 600,
+                      py: 2,
+                      mt: 2,
+                      '&:hover': { bgcolor: '#e9c349' },
+                    }}
+                    onClick={() => setIsRegisterModalOpen(true)}
+                  >
+                    {i18n.language === 'ar' ? 'بدء الطلب' : 'Initiate Request'}
+                  </Button>
+                </Box>
+
+                <Box sx={{ mt: 4, pt: 3, borderTop: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography sx={{ fontFamily: '"Inter", sans-serif', color: '#d4af37', fontSize: 16 }}>verified_user</Typography>
+                    <Typography sx={{ color: 'rgba(255,255,255,0.4)', fontFamily: '"Inter", sans-serif', fontSize: 10, letterSpacing: '0.1em', fontWeight: 500, textTransform: 'uppercase' }}>
+                      {i18n.language === 'ar' ? 'تشفير كامل' : 'End-to-End Encryption'}
+                    </Typography>
+                  </Box>
+                </Box>
               </Box>
-            )}
-          </motion.div>
+
+              {/* CTAs */}
+              <Box sx={{ mt: 3, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                <Button
+                  variant="contained"
+                  size="large"
+                  fullWidth
+                  onClick={() => setIsRegisterModalOpen(true)}
+                  disabled={unit.status === 'Sold'}
+                  sx={{
+                    py: 1.5,
+                    fontSize: '1rem',
+                    fontWeight: 600,
+                    bgcolor: '#003527',
+                    color: '#ffffff',
+                    '&:hover': { bgcolor: '#064e3b' },
+                  }}
+                >
+                  {unit.status === 'Sold' ? t('unit.sold') : t('unit.registerInterest')}
+                </Button>
+
+                {getFeature('Enable_Funding_Calculator__c', true) && (
+                  <Button
+                    variant="outlined"
+                    size="large"
+                    fullWidth
+                    onClick={() => setIsCalculatorOpen(true)}
+                    startIcon={<SakaniMathIcon color="#003527" />}
+                    sx={{
+                      py: 1.5,
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                      borderColor: 'rgba(0,0,0,0.12)',
+                      color: '#003527',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 1.5,
+                      '&:hover': { bgcolor: 'rgba(0,53,39,0.04)', borderColor: '#003527' },
+                    }}
+                  >
+                    {i18n.language === 'ar' ? 'حاسبة التمويل العقاري' : 'Mortgage Calculator'}
+                  </Button>
+                )}
+
+                {user && (
+                  <Button component={Link} to="/community" variant="outlined" size="large" fullWidth>
+                    {t('unit.openSupportCase')}
+                  </Button>
+                )}
+              </Box>
+            </Box>
+          </Box>
         </Box>
+
+        {/* Related Units */}
+        {relatedUnits.length > 0 && (
+          <Box sx={{ mt: 8 }}>
+            <Typography variant="h2" sx={{ mb: 4 }}>
+              {t('unit.similarUnits')}
+            </Typography>
+            <Grid container spacing={3}>
+              {relatedUnits.map((relatedUnit) => (
+                <Grid size={{ xs: 12, sm: 6, md: 4 }} key={relatedUnit.id}>
+                  <UnitCard unit={relatedUnit} />
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+        )}
       </Container>
 
-      {/* Register Interest Modal */}
+      {/* Modals */}
       <RegisterInterestModal
         isOpen={isRegisterModalOpen}
         onClose={() => setIsRegisterModalOpen(false)}
         projectId={unit.projectId}
         phaseId={unit.phaseId}
         unitId={unit.id}
-        projectName={unit.projectNameAr}
+        projectName={unit.projectNameAr || unit.projectName}
+        fallbackProvinceRegion={unit.projectProvinceRegion}
+        fallbackCity={unit.projectCity}
       />
 
-      {/* Image Gallery */}
+      <FinanceCalculatorModal
+        isOpen={isCalculatorOpen}
+        onClose={() => setIsCalculatorOpen(false)}
+        propertyPrice={unit.price}
+        onBookClick={() => setIsRegisterModalOpen(true)}
+      />
+
       {isGalleryOpen && (
         <ImageGallery
           images={unit.images}
@@ -511,7 +627,18 @@ export default function UnitDetails() {
           onClose={() => setIsGalleryOpen(false)}
         />
       )}
+
+      <ProjectModelViewer
+        isOpen={modelViewerOpen}
+        onClose={() => setModelViewerOpen(false)}
+        url={modelFile?.url ?? null}
+        title={
+          modelFile
+            ? unit.model || t('project.modelLabel', { number: modelFile.number, defaultValue: `Model ${modelFile.number}` })
+            : null
+        }
+        fileExtension={modelFile?.fileExtension}
+      />
     </Box>
   )
 }
-

@@ -4,9 +4,7 @@ import { motion } from 'framer-motion'
 /**
  * Animated dark overlay with floating particles for video background
  */
-export default function VideoOverlay() {
-  // Generate random positions for animated particles
-  const particles = Array.from({ length: 20 }, (_, i) => ({
+const particles = Array.from({ length: 20 }, (_, i) => ({
     id: i,
     x: Math.random() * 100,
     y: Math.random() * 100,
@@ -15,18 +13,24 @@ export default function VideoOverlay() {
     delay: Math.random() * 5,
   }))
 
+
+const rnd=Math.random();
+export default function VideoOverlay() {
+  // Generate random positions for animated particles
+  
+
   return (
     <Box
-      sx={{
+       sx={{
         position: 'absolute',
         inset: 0,
         zIndex: 3,
         pointerEvents: 'none',
-        // Dark overlay gradient - darker for better text readability
+        // Lighter overlay gradient for better video visibility
         // Using multiple layers for better coverage
         background: [
-          'linear-gradient(to bottom, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.85))',
-          'radial-gradient(circle at center, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.6))',
+          'linear-gradient(to bottom, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.35))',
+          'radial-gradient(circle at center, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.2))',
         ].join(', '),
       }}
     >
@@ -46,7 +50,7 @@ export default function VideoOverlay() {
           }}
           animate={{
             y: [0, -30, 0],
-            x: [0, Math.random() * 20 - 10, 0],
+            x: [0, rnd * 20 - 10, 0],
             opacity: [0.1, 0.3, 0.1],
             scale: [1, 1.2, 1],
           }}

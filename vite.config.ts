@@ -8,11 +8,17 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'icons/*.png', 'RiymarLogo.png', 'RiymarLogo-White.png', 'appicon.png'],
+      includeAssets: [
+        'favicon.ico',
+        'icons/*.png',
+        'brand/logo-icon.svg',
+        'brand/logo-vertical.png',
+        'brand/appicon.png',
+      ],
       manifest: {
-        name: 'ريمار | RIYMAR Properties',
-        short_name: 'Riymar',
-        description: 'اكتشف أرقى المشاريع العقارية مع ريمار',
+        name: 'CloudEstate | Real Estate',
+        short_name: 'CloudEstate',
+        description: 'اكتشف أرقى المشاريع العقارية',
         theme_color: '#1a365d',
         background_color: '#fafafa',
         display: 'standalone',
@@ -38,6 +44,7 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/images\.unsplash\.com\/.*/i,

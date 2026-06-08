@@ -116,8 +116,8 @@ export default function InstallBanner() {
         }}
       >
         <Avatar
-          src="/appicon.png"
-          alt="Bin Saedan App Icon"
+          src="/brand/appicon.png"
+          alt="CloudEstate App Icon"
           sx={{
             width: 48,
             height: 48,

@@ -16,6 +16,7 @@ import {
 import { Calculator, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Unit } from '../../lib/types'
+import CurrencyIcon from '../ui/CurrencyIcon'
 
 interface PriceCalculatorProps {
   unit: Unit
@@ -43,11 +44,16 @@ export default function PriceCalculator({ unit, isOpen, onClose }: PriceCalculat
   const totalAmount = unit.price + totalInterest
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat(i18n.language === 'ar' ? 'ar-SA' : 'en-US', {
-      style: 'currency',
-      currency: 'SAR',
+    const formatted = new Intl.NumberFormat(i18n.language === 'ar' ? 'ar-SA' : 'en-US', {
+      style: 'decimal',
       maximumFractionDigits: 0,
     }).format(amount)
+    return (
+      <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center' }}>
+        {formatted}
+        <CurrencyIcon theme="light" className="mx-1" />
+      </Box>
+    )
   }
 
   return (

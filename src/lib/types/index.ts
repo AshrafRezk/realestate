@@ -4,6 +4,10 @@ export interface Project {
   id: string;
   name: string;
   nameAr: string;
+  /** Salesforce Province_Region__c — used for filters & forms */
+  provinceRegion?: string;
+  /** Salesforce City__c */
+  city?: string;
   location: string;
   locationAr: string;
   coverImageUrl: string;
@@ -11,7 +15,40 @@ export interface Project {
   status: "Active" | "Completed";
   description?: string;
   descriptionAr?: string;
+  mapCentroidLat?: number;
+  mapCentroidLng?: number;
+  mapGeometryJson?: unknown;
+  logoUrl?: string;
+  topPlanUrl?: string;
+  brochureUrl?: string;
+  notes?: ProjectNote[];
+  attachments?: ProjectAttachment[];
+  gallery?: Array<{ url: string; tagEn: string; tagAr: string; }>;
+  /** Content files whose title ends with model-1 … model-10 */
+  modelFiles?: ProjectModelFile[];
   phases: Phase[];
+}
+
+export interface ProjectModelFile {
+  id: string;
+  number: number;
+  title: string;
+  url: string;
+  fileExtension?: string;
+}
+
+export interface ProjectAttachment {
+  id: string;
+  title: string;
+  fileExtension?: string;
+  fileType?: string;
+  url: string;
+}
+
+export interface ProjectNote {
+  id: string;
+  title: string;
+  url: string;
 }
 
 export interface Phase {
@@ -28,13 +65,34 @@ export interface Unit {
   projectId: string;
   phaseId: string;
   unitNumber: string;
+  /** Salesforce Model__c */
+  model?: string;
+  externalId?: string;
   price: number;
+  finalPrice?: number;
+  status: "Available" | "Reserved" | "Sold" | "Contracted" | "On-Hold" | "Blocked";
   bedrooms: number;
   bathrooms?: number;
   area: number;
-  status: "Available" | "Reserved" | "Sold";
-  deliveryDate: string;
+  bua?: number;
+  floor?: number;
+  finishing?: string;
+  usageType?: string;
+  view?: string;
+  hasGarden?: boolean;
+  hasLand?: boolean;
+  hasRoof?: boolean;
+  hasOutdoor?: boolean;
+  gardenArea?: number;
+  landArea?: number;
+  roofArea?: number;
+  outdoorArea?: number;
+  eligibleForSubsidies?: boolean;
+  subsidies?: string;
+  deliveryDate?: string;
   images: string[];
+  unitImage?: string;
+  projectHeroImage?: string;
   floorPlan?: string;
   sketchupEmbedUrl?: string;
   amenities?: string[];
@@ -42,14 +100,16 @@ export interface Unit {
   descriptionAr?: string;
   projectName?: string;
   projectNameAr?: string;
+  /** From `Project__r` on unit query — used when lead form can’t match `getProjects()` */
+  projectProvinceRegion?: string;
+  projectCity?: string;
   phaseName?: string;
   phaseNameAr?: string;
-  paymentPlan?: {
-    percentagePaid: number;
-    installmentsRemaining?: number;
-    hasMaintenanceCheque?: boolean;
-    status: "Fully Paid" | "Partial";
-  };
+  buildingName?: string;
+  blockName?: string;
+  notes?: any[];
+  paymentProgress?: number; // 0-100
+  paymentStatus?: string;
 }
 
 export interface Lead {
@@ -58,6 +118,7 @@ export interface Lead {
   lastName: string;
   email: string;
   phone: string;
+  profile?: "Investor" | "Customer" | "Supplier";
   source: "PWA";
   interestedProjectId?: string;
   interestedPhaseId?: string;
@@ -101,13 +162,36 @@ export type CaseStatus = "New" | "InProgress" | "Resolved" | "Closed";
 export interface UnitFilters {
   projectId?: string;
   phaseId?: string;
+  buildingId?: string;
+  blockId?: string;
+  projectName?: string;
+  /** Salesforce Model__c */
+  model?: string;
   minPrice?: number;
   maxPrice?: number;
-  bedrooms?: number;
-  minArea?: number;
-  maxArea?: number;
+  minBedrooms?: number;
+  maxBedrooms?: number;
+  minBathrooms?: number;
+  maxBathrooms?: number;
+  minTotalArea?: number;
+  maxTotalArea?: number;
+  minBUA?: number;
+  maxBUA?: number;
   status?: Unit["status"];
-  deliveryYear?: number;
+  usageType?: string;
+  finishing?: string;
+  city?: string;
+  province?: string;
+  hasGarden?: boolean;
+  hasLand?: boolean;
+  hasRoof?: boolean;
+  hasOutdoor?: boolean;
+  eligibleForSubsidies?: boolean;
+  searchText?: string;
+  sortBy?: string;
+  sortOrder?: 'ASC' | 'DESC';
+  page?: number;
+  pageSize?: number;
 }
 
 export interface AuthUser {
@@ -116,7 +200,6 @@ export interface AuthUser {
   firstName: string;
   lastName: string;
   email: string;
-  phone?: string;
 }
 
 export interface LoginCredentials {
@@ -129,4 +212,29 @@ export interface ApiResponse<T> {
   data?: T;
   error?: string;
 }
+
+export interface NewsArticle {
+  id: string;
+  title: string;
+  slug?: string;
+  publicationDate?: string;
+  segment?: string;
+  coverImageUrl?: string;
+  excerpt?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  lastModified?: string;
+  body?: string;
+}
+
+export interface NewsFilters {
+  page?: number;
+  pageSize?: number;
+  year?: string;
+  month?: string;
+  segment?: string;
+  sortBy?: string;
+  sortOrder?: 'ASC' | 'DESC';
+}
+
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { Camera, Mesh, Plane, Program, Renderer, Texture, Transform } from 'ogl';
+import { Camera, Mesh, Plane, Program, Renderer, Texture, Transform, Raycast, Vec2 } from 'ogl';
 import { useEffect, useRef } from 'react';
 
 import './CircularGallery.css';
@@ -293,11 +293,13 @@ class App {
       borderRadius = 0,
       font = 'bold 30px Figtree',
       scrollSpeed = 2,
-      scrollEase = 0.05
+      scrollEase = 0.05,
+      onClick
     } = {}
   ) {
     document.documentElement.classList.remove('no-js');
     this.container = container;
+    this.onClick = onClick;
     this.scrollSpeed = scrollSpeed;
     this.scroll = { ease: scrollEase, current: 0, target: 0, last: 0 };
     this.onCheckDebounce = debounce(this.onCheck, 200);
@@ -324,6 +326,8 @@ class App {
     this.camera = new Camera(this.gl);
     this.camera.fov = 45;
     this.camera.position.z = 20;
+    this.raycast = new Raycast(this.gl);
+    this.mouse = new Vec2();
   }
   createScene() {
     this.scene = new Transform();
@@ -374,6 +378,7 @@ class App {
     this.isDown = true;
     this.scroll.position = this.scroll.current;
     this.start = e.touches ? e.touches[0].clientX : e.clientX;
+    this.startY = e.touches ? e.touches[0].clientY : e.clientY;
   }
   onTouchMove(e) {
     if (!this.isDown) return;
@@ -381,9 +386,42 @@ class App {
     const distance = (this.start - x) * (this.scrollSpeed * 0.025);
     this.scroll.target = this.scroll.position + distance;
   }
-  onTouchUp() {
+  onTouchUp(e) {
     this.isDown = false;
     this.onCheck();
+    
+    // Check for click
+    if (e && this.onClick) {
+      const x = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+      const y = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+      const dx = Math.abs(x - this.start);
+      const dy = Math.abs(y - this.startY);
+      
+      // If movement is very small, treat as click
+      if (dx < 10 && dy < 10) {
+        // Convert screen coordinates to normalized device coordinates (NDC)
+        const rect = this.container.getBoundingClientRect();
+        const clientX = x - rect.left;
+        const clientY = y - rect.top;
+        this.mouse.set(
+          (clientX / rect.width) * 2 - 1,
+          -(clientY / rect.height) * 2 + 1
+        );
+        
+        // Raycast against all media planes
+        const meshes = this.medias.map(m => m.plane);
+        this.raycast.castMouse(this.camera, this.mouse);
+        const hits = this.raycast.intersectBounds(meshes);
+        
+        if (hits.length > 0) {
+          // The hit.mesh represents the plane that was clicked
+          const clickedMedia = this.medias.find(m => m.plane === hits[0]);
+          if (clickedMedia) {
+            this.onClick(clickedMedia);
+          }
+        }
+      }
+    }
   }
   onWheel(e) {
     const delta = e.deltaY || e.wheelDelta || e.detail;
@@ -464,14 +502,15 @@ export default function CircularGallery({
   borderRadius = 0.05,
   font = 'bold 30px Figtree',
   scrollSpeed = 2,
-  scrollEase = 0.05
+  scrollEase = 0.05,
+  onClick
 }) {
   const containerRef = useRef(null);
   useEffect(() => {
-    const app = new App(containerRef.current, { items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase });
+    const app = new App(containerRef.current, { items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase, onClick });
     return () => {
       app.destroy();
     };
-  }, [items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase]);
+  }, [items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase, onClick]);
   return <div className="circular-gallery" ref={containerRef} />;
 }

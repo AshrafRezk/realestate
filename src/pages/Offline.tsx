@@ -1,14 +1,27 @@
 import { Box, Typography, Button, Container } from '@mui/material'
 import { WifiOff, RefreshCcw } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import SiteContactBar from '../components/layout/SiteContactBar'
+import Footer from '../components/layout/Footer'
 
 export default function Offline() {
+  const { t } = useTranslation()
+
   const handleRefresh = () => {
     window.location.reload()
   }
 
   return (
-    <Container maxWidth="sm" sx={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', py: 4 }}>
-      <Box sx={{ textAlign: 'center', width: '100%' }}>
+    <Container
+      maxWidth="sm"
+      sx={{
+        minHeight: '100dvh',
+        display: 'flex',
+        flexDirection: 'column',
+        py: 4,
+      }}
+    >
+      <Box sx={{ textAlign: 'center', width: '100%', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         <Box
           sx={{
             width: 80,
@@ -26,20 +39,19 @@ export default function Offline() {
         </Box>
 
         <Typography variant="h4" fontWeight="bold" gutterBottom>
-          لا يوجد اتصال بالإنترنت
+          {t('offline.title')}
         </Typography>
         <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-          يبدو أنك غير متصل بالإنترنت. تحقق من اتصالك وحاول مرة أخرى.
+          {t('offline.description')}
         </Typography>
 
         <Button variant="contained" size="large" onClick={handleRefresh} startIcon={<RefreshCcw size={20} />}>
-          إعادة المحاولة
+          {t('offline.retry')}
         </Button>
-
-        <Typography variant="caption" color="text.secondary" sx={{ mt: 4, display: 'block' }}>
-          فيصل بن سعيدان | Faisal Bin Saedan
-        </Typography>
       </Box>
+
+      <SiteContactBar />
+      <Footer />
     </Container>
   )
 }

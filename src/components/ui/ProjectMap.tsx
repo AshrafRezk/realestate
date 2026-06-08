@@ -24,8 +24,8 @@ const mapContainerStyle = {
 }
 
 const defaultCenter = {
-  lat: 24.7136, // Riyadh
-  lng: 46.6753,
+  lat: 30.0,
+  lng: 31.7,
 }
 
 export default function ProjectMap({

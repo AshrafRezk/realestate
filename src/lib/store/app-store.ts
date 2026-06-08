@@ -1,5 +1,7 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { UnitFilters } from "../types";
+import { DEMO_CONFIG } from "../demo-config";
 
 interface AppState {
   // PWA Install
@@ -18,6 +20,10 @@ interface AppState {
   // UI State
   isFilterDrawerOpen: boolean;
   setFilterDrawerOpen: (open: boolean) => void;
+
+  // Maintenance Gate
+  isMaintenanceAuthorized: boolean;
+  authorizeMaintenance: (password: string) => boolean;
 }
 
 interface BeforeInstallPromptEvent extends Event {
@@ -25,23 +31,46 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
-export const useAppStore = create<AppState>((set) => ({
-  // PWA Install
-  installPromptEvent: null,
-  isInstallable: false,
-  showInstallBanner: true,
-  setInstallPrompt: (event) =>
-    set({ installPromptEvent: event, isInstallable: event !== null }),
-  setShowInstallBanner: (show) => set({ showInstallBanner: show }),
-  dismissInstallBanner: () => set({ showInstallBanner: false }),
+const MAINTENANCE_PASSWORD = DEMO_CONFIG.maintenancePassword;
 
-  // Search Filters
-  filters: {},
-  setFilters: (filters) => set({ filters }),
-  clearFilters: () => set({ filters: {} }),
+export const useAppStore = create<AppState>()(
+  persist(
+    (set) => ({
+      // PWA Install
+      installPromptEvent: null,
+      isInstallable: false,
+      showInstallBanner: true,
+      setInstallPrompt: (event) =>
+        set({ installPromptEvent: event, isInstallable: event !== null }),
+      setShowInstallBanner: (show) => set({ showInstallBanner: show }),
+      dismissInstallBanner: () => set({ showInstallBanner: false }),
 
-  // UI State
-  isFilterDrawerOpen: false,
-  setFilterDrawerOpen: (open) => set({ isFilterDrawerOpen: open }),
-}));
+      // Search Filters
+      filters: {},
+      setFilters: (filters) => set({ filters }),
+      clearFilters: () => set({ filters: {} }),
+
+      // UI State
+      isFilterDrawerOpen: false,
+      setFilterDrawerOpen: (open) => set({ isFilterDrawerOpen: open }),
+
+      // Maintenance Gate
+      isMaintenanceAuthorized: false,
+      authorizeMaintenance: (password) => {
+        if (password === MAINTENANCE_PASSWORD) {
+          set({ isMaintenanceAuthorized: true });
+          return true;
+        }
+        return false;
+      },
+    }),
+    {
+      name: `${DEMO_CONFIG.localStoragePrefix}-app-storage`,
+      partialize: (state) => ({ 
+        isMaintenanceAuthorized: state.isMaintenanceAuthorized,
+        showInstallBanner: state.showInstallBanner 
+      }),
+    }
+  )
+);
 

@@ -2,7 +2,7 @@ import { SignJWT, jwtVerify } from "jose";
 import type { AuthUser } from "../types";
 
 const JWT_SECRET = new TextEncoder().encode(
-  import.meta.env.VITE_JWT_SECRET || "binsaedan-pwa-secret-key-change-in-production"
+  import.meta.env.VITE_JWT_SECRET || "change-this-secret-in-production"
 );
 
 const JWT_EXPIRY = "1h";

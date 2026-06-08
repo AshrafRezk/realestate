@@ -10,25 +10,24 @@ import {
   Divider,
   Stack,
 } from '@mui/material'
+import { alpha } from '@mui/material/styles'
 import { Close, Refresh as RefreshIcon } from '@mui/icons-material'
 import { useTranslation } from 'react-i18next'
 import { useAppStore } from '../../lib/store'
 import { getProjects } from '../../lib/api-client'
-import { Project, Phase } from '../../lib/types'
+import { UNIT_MODEL_OPTIONS } from '../../lib/constants/unitModels'
+import { Project } from '../../lib/types'
 
 export default function FilterDrawer() {
   const { t, i18n } = useTranslation()
   const { isFilterDrawerOpen, setFilterDrawerOpen, filters, setFilters, clearFilters } = useAppStore()
   const [projects, setProjects] = useState<Project[]>([])
-  const [phases, setPhases] = useState<Phase[]>([])
 
   const [localFilters, setLocalFilters] = useState({
     projectId: filters.projectId || '',
-    phaseId: filters.phaseId || '',
+    model: filters.model || '',
     bedrooms: filters.bedrooms?.toString() || '',
-    status: filters.status || '',
     priceRange: '',
-    deliveryYear: filters.deliveryYear?.toString() || '',
   })
 
   useEffect(() => {
@@ -42,22 +41,11 @@ export default function FilterDrawer() {
   }, [])
 
   useEffect(() => {
-    if (localFilters.projectId) {
-      const project = projects.find((p) => p.id === localFilters.projectId)
-      setPhases(project?.phases || [])
-    } else {
-      setPhases([])
-    }
-  }, [localFilters.projectId, projects])
-
-  useEffect(() => {
     setLocalFilters({
       projectId: filters.projectId || '',
-      phaseId: filters.phaseId || '',
+      model: filters.model || '',
       bedrooms: filters.bedrooms?.toString() || '',
-      status: filters.status || '',
       priceRange: '',
-      deliveryYear: filters.deliveryYear?.toString() || '',
     })
   }, [filters])
 
@@ -70,13 +58,6 @@ export default function FilterDrawer() {
     { value: '5', label: t('search.options.fivePlusRooms') },
   ]
 
-  const statusOptions = [
-    { value: '', label: t('search.options.all') },
-    { value: 'Available', label: t('search.options.available') },
-    { value: 'Reserved', label: t('search.options.reserved') },
-    { value: 'Sold', label: t('search.options.sold') },
-  ]
-
   const priceOptions = [
     { value: '', label: t('search.options.all') },
     { value: '0-1000000', label: t('search.options.price.opt1') },
@@ -86,21 +67,14 @@ export default function FilterDrawer() {
     { value: '5000000-999999999', label: t('search.options.price.opt5') },
   ]
 
-  const yearOptions = [
-    { value: '', label: t('search.options.all') },
-    { value: '2025', label: '2025' },
-    { value: '2026', label: '2026' },
-    { value: '2027', label: '2027' },
-  ]
-
   const projectOptions = [
     { value: '', label: t('search.options.allProjects') },
     ...projects.map((p) => ({ value: p.id, label: i18n.language.startsWith('ar') ? p.nameAr : p.name })),
   ]
 
-  const phaseOptions = [
-    { value: '', label: t('search.options.allPhases') },
-    ...phases.map((p) => ({ value: p.id, label: i18n.language.startsWith('ar') ? p.nameAr : p.name })),
+  const modelOptions = [
+    { value: '', label: t('search.options.all') },
+    ...UNIT_MODEL_OPTIONS.map((m) => ({ value: m, label: m })),
   ]
 
   const handleApply = () => {
@@ -110,12 +84,11 @@ export default function FilterDrawer() {
 
     setFilters({
       projectId: localFilters.projectId || undefined,
-      phaseId: localFilters.phaseId || undefined,
+      model: localFilters.model || undefined,
       bedrooms: localFilters.bedrooms ? parseInt(localFilters.bedrooms) : undefined,
-      status: (localFilters.status as 'Available' | 'Reserved' | 'Sold') || undefined,
       minPrice,
       maxPrice,
-      deliveryYear: localFilters.deliveryYear ? parseInt(localFilters.deliveryYear) : undefined,
+      page: 1,
     })
     setFilterDrawerOpen(false)
   }
@@ -123,16 +96,18 @@ export default function FilterDrawer() {
   const handleReset = () => {
     setLocalFilters({
       projectId: '',
-      phaseId: '',
+      model: '',
       bedrooms: '',
-      status: '',
       priceRange: '',
-      deliveryYear: '',
     })
     clearFilters()
   }
 
-  const hasActiveFilters = Object.values(localFilters).some((v) => v !== '')
+  const hasActiveFilters =
+    localFilters.projectId !== '' ||
+    localFilters.model !== '' ||
+    localFilters.bedrooms !== '' ||
+    localFilters.priceRange !== ''
 
   return (
     <Drawer
@@ -140,11 +115,14 @@ export default function FilterDrawer() {
       open={isFilterDrawerOpen}
       onClose={() => setFilterDrawerOpen(false)}
       PaperProps={{
-        sx: {
+        sx: (theme) => ({
           borderTopLeftRadius: 24,
           borderTopRightRadius: 24,
           maxHeight: '85vh',
-        },
+          backgroundColor: alpha(theme.palette.background.paper, 0.8),
+          backdropFilter: 'blur(16px)',
+          borderTop: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
+        }),
       }}
     >
       <Box sx={{ p: 2 }}>
@@ -193,7 +171,6 @@ export default function FilterDrawer() {
               setLocalFilters({
                 ...localFilters,
                 projectId: e.target.value,
-                phaseId: '',
               })
             }
             fullWidth
@@ -205,21 +182,19 @@ export default function FilterDrawer() {
             ))}
           </TextField>
 
-          {localFilters.projectId && (
-            <TextField
-              select
-              label={t('search.phase')}
-              value={localFilters.phaseId}
-              onChange={(e) => setLocalFilters({ ...localFilters, phaseId: e.target.value })}
-              fullWidth
-            >
-              {phaseOptions.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-          )}
+          <TextField
+            select
+            label={t('search.model')}
+            value={localFilters.model}
+            onChange={(e) => setLocalFilters({ ...localFilters, model: e.target.value })}
+            fullWidth
+          >
+            {modelOptions.map((option) => (
+              <MenuItem key={option.value || 'all'} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </TextField>
 
           <TextField
             select
@@ -248,34 +223,6 @@ export default function FilterDrawer() {
               </MenuItem>
             ))}
           </TextField>
-
-          <TextField
-            select
-            label={t('search.status')}
-            value={localFilters.status}
-            onChange={(e) => setLocalFilters({ ...localFilters, status: e.target.value })}
-            fullWidth
-          >
-            {statusOptions.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </TextField>
-
-          <TextField
-            select
-            label={t('search.deliveryYear')}
-            value={localFilters.deliveryYear}
-            onChange={(e) => setLocalFilters({ ...localFilters, deliveryYear: e.target.value })}
-            fullWidth
-          >
-            {yearOptions.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </TextField>
         </Stack>
       </Box>
 
@@ -287,4 +234,3 @@ export default function FilterDrawer() {
     </Drawer>
   )
 }
-

@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { Unit } from '../types'
+import { DEMO_CONFIG } from '../demo-config'
 
 interface ComparisonState {
   comparisonUnits: Unit[]
@@ -32,7 +33,7 @@ export const useComparisonStore = create<ComparisonState>()(
       canAddMore: () => get().comparisonUnits.length < MAX_COMPARISON_UNITS,
     }),
     {
-      name: 'binsaedan-comparison',
+      name: `${DEMO_CONFIG.localStoragePrefix}-comparison`,
     }
   )
 )

@@ -2,8 +2,14 @@
   "common": {
     "home": "Home",
     "search": "Search",
+    "aboutUs": "About Us",
+    "achievements": "Our Achievements",
     "community": "My Community",
     "contact": "Contact Us",
+    "support": "Support",
+    "latestReleases": "Latest Releases",
+    "ourNews": "Our News",
+    "news": "Our News",
     "login": "Login",
     "logout": "Logout",
     "back": "Back",
@@ -17,14 +23,91 @@
     "delete": "Delete",
     "edit": "Edit",
     "view": "View",
-    "more": "More"
+    "more": "More",
+    "call": "Call"
+  },
+  "footer": {
+    "nav": "Footer navigation",
+    "copyright": "© {{year}} {{companyName}}. All rights reserved.",
+    "developedBy": "Developed with love by"
+  },
+  "siteContactBar": {
+    "label": "Contact and social media"
+  },
+  "ach": {
+    "title": "Our Achievements",
+    "subtitle": "Milestones that shaped our story and the recognition that reflects our commitment to quality and innovation.",
+    "stats": {
+      "years": "Years of Excellence",
+      "projects": "Projects Delivered",
+      "units": "Units Delivered",
+      "families": "Families Served"
+    },
+    "timeline": {
+      "title": "Timeline",
+      "subtitle": "A Journey of Growth"
+    },
+    "snapshot": {
+      "kicker": "Company Snapshot",
+      "title": "A legacy of development, built for today",
+      "subtitle": "A modern extension of the {{companyName}} family legacy since 1934—focused on high-quality residential and commercial destinations, investment solutions, and long-term property care across Egypt.",
+      "cards": {
+        "residential": {
+          "title": "Residential Communities",
+          "desc": "Malfa and Nozol developments—villas, modern complexes, and semi-gated neighborhoods designed for everyday living."
+        },
+        "commercial": {
+          "title": "Commercial Destinations",
+          "desc": "Plazas and office assets in strategic locations, built to support thriving business districts."
+        },
+        "investment": {
+          "title": "Investment Solutions",
+          "desc": "Professionally managed real estate funds that offer structured opportunities for individuals and institutions."
+        },
+        "management": {
+          "title": "Property Management",
+          "desc": "Long-term maintenance, leasing, and customer support to protect asset value beyond delivery."
+        }
+      },
+      "highlights": {
+        "legacy": {
+          "title": "Heritage & Land Bank",
+          "desc": "Decades of trust and a strategic portfolio that supports sustainable urban growth."
+        },
+        "quality": {
+          "title": "Modern Delivery",
+          "desc": "Using advanced practices like BIM to improve efficiency, reduce waste, and elevate design quality."
+        },
+        "vision": {
+          "title": "Vision 2030 Alignment",
+          "desc": "Contributing to homeownership growth and workforce development through nationally aligned initiatives."
+        }
+      }
+    },
+    "awards": {
+      "title": "Recognition",
+      "subtitle": "Awards & Certifications"
+    },
+    "press": {
+      "title": "What the Press Says"
+    }
+  },
+  "about": {
+    "title": "About Us",
+    "subtitle": "Learn about our board members and our strategic vision and mission.",
+    "companyIntroTitle": "About the Company",
+    "companyIntroBody": "It is a real estate development company established to be an active partner in Egypt's real estate market by implementing exceptional residential and commercial innovations. Since its inception, the company has worked to ensure that its projects are characterized by quality and sustainability to create spaces that meet the desires and goals of individuals and communities.",
+    "visionMissionTitle": "Vision & Mission",
+    "boardMembersTitle": "Board Members",
+    "animatedPanelTitle": "Building Tomorrow",
+    "animatedPanelBody": "Our strategy combines design quality, investment discipline, and sustainable urban value."
   },
   "home": {
-    "title": "RIYMAR",
-    "subtitle": "Explore our distinguished collection of residential projects in the best locations in the Kingdom",
-    "heroTitle": "Your Community,",
-    "heroSubtitle": "With a New Style",
-    "heroDescription": "Discover the finest residential projects in the Kingdom of Saudi Arabia. We build integrated communities for future generations.",
+    "title": "{{companyName}}",
+    "subtitle": "Explore our distinguished collection of residential projects in the best locations across Egypt",
+    "heroTitle": "Shaping the Future",
+    "heroSubtitle": "of Real Estate",
+    "heroDescription": "We design and deliver developments that shape cities, support national progress, and create long-lasting value.",
     "exploreProjects": "Explore Projects",
     "scrollDown": "Scroll Down",
     "latestProjects": "Latest Projects",
@@ -41,13 +124,38 @@
     "ctaDescription": "Register your interest now and our team will contact you to help you choose the right unit",
     "registerInterest": "Register Your Interest",
     "viewAllUnits": "View All Units",
-    "phone": "+966 11 234 5678",
-    "email": "info@riymar.sa",
-    "address": "Riyadh, Kingdom of Saudi Arabia",
-    "phasesAvailable": "{{count}} phases available",
+    "phone": "{{phone}}",
+    "email": "{{email}}",
+    "address": "{{address}}",
+    "phasesAvailable": "{{count}} units available",
     "soldOut": "Sold Out",
     "phases": "phases",
-    "viewUnits": "View Units"
+    "viewUnits": "View Units",
+    "watchOnInstagram": "Watch video on Instagram",
+    "inspiringSpacesTitle": "Inspiring Spaces, Building Futures",
+    "inspiringSpacesDesc": "Through structure, discipline, and strategic foresight, we transform potential into enduring, measurable value, supporting national progress and sustainable growth.",
+    "statsTitle": "Strong foundation and advanced innovations",
+    "statsDesc": "At {{companyName}}, we strive to implement modern architectural styles and inspiring innovations with a strong foundation.",
+    "stats": {
+      "housing": "Housing units",
+      "units": "Units",
+      "projects": "Projects",
+      "exhibitions": "Exhibitions",
+      "drivethrough": "Drive Through",
+      "plaza": "Plaza"
+    },
+    "fields": {
+      "title": "Our Fields",
+      "readMore": "Read More →",
+      "residential": {
+        "title": "Residential",
+        "description": "CloudEstate residential projects offer thoughtfully designed homes with sustainable features, modern amenities, and comfortable living spaces tailored to diverse lifestyles."
+      },
+      "commercial": {
+        "title": "Commercial",
+        "description": "Our carefully selected commercial buildings inspire you to pursue your entrepreneurial dreams, as we provide the ideal starting point for whatever your business growth may be, from retail and entertainment venues to modern office space."
+      }
+    }
   },
   "search": {
     "title": "Search for a Unit",
@@ -63,16 +171,17 @@
     "filterResults": "Filter Results",
     "reset": "Reset",
     "project": "Project",
-    "phase": "Phase",
+    "model": "Model",
     "bedrooms": "Number of Rooms",
-    "status": "Status",
-    "deliveryYear": "Delivery Year",
     "priceRange": "Price Range",
+    "eligibleForSubsidies": "Eligible for subsidies (Sakani / Ministry of Defense)",
     "applyFilters": "Apply Filters",
+    "previous": "Previous",
+    "next": "Next",
     "autocomplete": {
       "placeholder": "Search for a project or phase...",
-      "popular1": "Apartments for sale in Riyadh",
-      "popular2": "Villas in Jeddah",
+      "popular1": "Apartments in New Administrative Capital",
+      "popular2": "Villas in Hurghada",
       "popular3": "Residential Units",
       "popular4": "New Projects",
       "clearedRecent": "Recent search history cleared",
@@ -84,21 +193,17 @@
     "options": {
       "all": "All",
       "allProjects": "All Projects",
-      "allPhases": "All Phases",
       "oneRoom": "1 Room",
       "twoRooms": "2 Rooms",
       "threeRooms": "3 Rooms",
       "fourRooms": "4 Rooms",
       "fivePlusRooms": "5+ Rooms",
-      "available": "Available",
-      "reserved": "Reserved",
-      "sold": "Sold",
       "price": {
-        "opt1": "Less than 1 Million SAR",
-        "opt2": "1 - 2 Million SAR",
-        "opt3": "2 - 3 Million SAR",
-        "opt4": "3 - 5 Million SAR",
-        "opt5": "More than 5 Million SAR"
+        "opt1": "Less than 1 Million EGP",
+        "opt2": "1 - 2 Million EGP",
+        "opt3": "2 - 3 Million EGP",
+        "opt4": "3 - 5 Million EGP",
+        "opt5": "More than 5 Million EGP"
       }
     }
   },
@@ -125,6 +230,7 @@
     "areaLabel": "Area",
     "deliveryLabel": "Delivery",
     "description": "Description",
+    "modelLayout": "Unit model layout",
     "openSupportCase": "Open Support Case",
     "areaUnit": "m²"
   },
@@ -132,7 +238,25 @@
     "title": "Contact Us",
     "description": "We're here to help. Contact us for any inquiries or feedback",
     "formTitle": "Send us a Message",
+    "formCta": "Open the form to share your details and message—we will respond as soon as we can.",
+    "profileQuestion": "What's your profile? *",
+    "profileRequired": "Please choose a profile",
+    "profileOptions": {
+      "investor": "Investor",
+      "supplier": "Supplier",
+      "operator": "Operator",
+      "customer": "Customer"
+    },
     "name": "Name",
+    "namePlaceholder": "Your name",
+    "region": "Region",
+    "regionPlaceholder": "Your region",
+    "city": "City",
+    "cityPlaceholder": "Your city",
+    "project": "Project",
+    "projectPlaceholder": "Project name",
+    "notSpecified": "Not specified",
+    "loadingProjects": "Loading options…",
     "email": "Email",
     "phone": "Phone",
     "message": "Your Message",
@@ -142,7 +266,7 @@
     "phoneLabel": "Phone",
     "emailLabel": "Email",
     "addressLabel": "Address",
-    "address": "Riyadh, Kingdom of Saudi Arabia",
+    "address": "{{address}}",
     "workingHours": "Working Hours",
     "workingHoursValue": "Sunday - Thursday, 9 AM - 5 PM",
     "followUs": "Follow Us",
@@ -155,6 +279,12 @@
     "emailPlaceholder": "ahmed@example.com",
     "phonePlaceholder": "+966 5X XXX XXXX",
     "messagePlaceholder": "How can we help you?",
+    "supplierPdfLabel": "Supplier document (PDF)",
+    "supplierPdfHint": "Upload your company profile or registration document (PDF, max 5 MB).",
+    "supplierPdfRequired": "Please upload a PDF document",
+    "supplierPdfInvalid": "Only PDF files are allowed",
+    "supplierPdfTooLarge": "PDF must be 5 MB or smaller",
+    "supplierPdfSelected": "Selected: {{name}}",
     "submitting": "Sending...",
     "messageSent": "Your message has been sent!",
     "willContactSoon": "We will contact you soon",
@@ -198,11 +328,12 @@
     "linkedin": "LinkedIn",
     "snapchat": "Snapchat",
     "tiktok": "TikTok",
+    "youtube": "YouTube",
     "success": "Shared successfully"
   },
   "community": {
     "welcome": "Welcome",
-    "welcomeMessage": "Welcome to RIYMAR Community",
+    "welcomeMessage": "Welcome to {{companyName}} Community",
     "myUnits": "My Units",
     "myCases": "My Cases",
     "noUnits": "No Units",
@@ -211,7 +342,12 @@
     "newCase": "New Case",
     "activeCases": "Active Cases",
     "unitsCount": "My Units",
-    "casesCount": "My Cases"
+    "casesCount": "My Requests",
+    "paymentPlan": "Payment Plan",
+    "fullyPaid": "Fully Paid",
+    "newRequest": "New Request",
+    "noRequests": "No Requests",
+    "deliveryDate": "Delivery: {{date}}"
   },
   "calculator": {
     "title": "Finance Calculator",
@@ -242,6 +378,11 @@
     "usernameRequired": "Username is required",
     "passwordRequired": "Password is required"
   },
+  "offline": {
+    "title": "No internet connection",
+    "description": "You appear to be offline. Check your connection and try again.",
+    "retry": "Try again"
+  },
   "cases": {
     "title": "New Case",
     "subtitle": "You will be contacted as soon as possible",
@@ -261,7 +402,8 @@
       "error": "An error occurred. Please try again.",
       "validation": {
         "subjectRequired": "Subject is required (min 5 chars)",
-        "descriptionRequired": "Description is required (min 10 chars)"
+        "descriptionRequired": "Description is required (min 10 chars)",
+        "unitRequired": "Please select the unit this request relates to"
       }
     },
     "status": {
@@ -284,7 +426,7 @@
   },
   "installBanner": {
     "title": "Better experience with the app",
-    "description": "Install RIYMAR app for quick access",
+    "description": "Install {{companyName}} app for quick access",
     "install": "Install"
   },
   "brokerLanding": {
@@ -314,5 +456,113 @@
     "callNow": "Call now",
     "copyright": "Broker Property Management. All rights reserved.",
     "whatsapp": "Chat on WhatsApp"
+  },
+  "ourNewsPage": {
+    "title": "Our News",
+    "subtitle": "Company updates, announcements, and media coverage from {{companyName}}.",
+    "placeholder": {
+      "title": "Content coming soon",
+      "description": "Our news section is being prepared. Articles, press releases, and company updates will be published here shortly.",
+      "note": "Content for this page will be provided by the CloudEstate team."
+    },
+    "contactCta": "Contact us"
+  },
+  "latestReleasesPage": {
+    "title": "Latest Releases",
+    "subtitle": "Explore our portfolio of residential and commercial developments across Egypt.",
+    "status": {
+      "active": "Active",
+      "completed": "Completed"
+    },
+    "count_one": "{{count}} project",
+    "count_other": "{{count}} projects",
+    "empty": {
+      "title": "No projects found",
+      "description": "Check back soon for new releases with available units."
+    },
+    "viewProject": "View project",
+    "noImage": "No image available"
+  },
+  "project": {
+    "notFound": "Project not found",
+    "notes": "Notes",
+    "noNotes": "No notes",
+    "attachments": "Attachments",
+    "noAttachments": "No attachments",
+    "models": "Unit Models",
+    "modelLabel": "Model {{number}}",
+    "openModelFile": "Open file",
+    "clickToEnlarge": "Click to enlarge"
+  },
+  "news": {
+    "title": "Latest Press Releases and Real Estate News",
+    "readingTime": "Reading time: {{minutes}} minutes",
+    "share": "Share",
+    "followUs": "Follow Us",
+    "relatedPosts": "Related Posts",
+    "backToListings": "Back to listings",
+    "year": "Year",
+    "month": "Month",
+    "businessSegment": "Business Segment",
+    "searchKeywords": "Search keywords",
+    "all": "All",
+    "select": "Select",
+    "empty": "No news articles found."
+  },
+  "chatbot": {
+    "greeting": "Welcome to {{companyName}}! I'm Sara, your digital assistant. How can I help you today?",
+    "menu": {
+      "projects": "Explore Projects & Units",
+      "services": "Our Services",
+      "contact": "Contact Sales / Register Interest",
+      "findUnit": "🔍 Find the Perfect Unit",
+      "browseAll": "📂 Browse All Projects"
+    },
+    "link": {
+      "projects": "You can explore our latest residential and commercial communities on our Projects page: /projects",
+      "services": "We offer a range of services from property management to investment solutions. Learn more on our About page: /about-us"
+    },
+    "findUnitIntro": "I can help you find available units based on your preferences. Let's start! What is your preferred location?",
+    "location": {
+      "cairo": "Cairo",
+      "new_capital": "New Administrative Capital",
+      "red_sea": "Red Sea (Hurghada)",
+      "any": "Any Location"
+    },
+    "askBudget": "What is your budget range?",
+    "budget": {
+      "under_3m": "Under 3M EGP",
+      "between_3m_8m": "3M - 8M EGP",
+      "above_8m": "Above 8M EGP",
+      "any": "Any Budget"
+    },
+    "askBedrooms": "How many bedrooms do you need?",
+    "bedrooms": {
+      "two": "2 Bedrooms",
+      "three": "3 Bedrooms",
+      "four_plus": "4+ Bedrooms",
+      "any": "Any Number"
+    },
+    "proposalsFound": "Great news! I found these matching available units for you:",
+    "noProposalsFound": "I couldn't find available units matching those exact preferences, but here are some of our premium active listings you might like:",
+    "unitCard": {
+      "viewDetails": "View Details",
+      "interested": "I'm Interested",
+      "area": "Area"
+    },
+    "askName": "Great! I'll connect you with our sales team. First, what is your full name?",
+    "askCountry": "Nice to meet you! Please enter your mobile country code (e.g. +20).",
+    "askPhone": "Thank you. What is your phone number?",
+    "askRegion": "Which region or province are you located in?",
+    "askCity": "Which city do you live in?",
+    "askCustomerType": "Are you inquiring as an individual or on behalf of a company?",
+    "customerType": {
+      "individual": "Individual (Private Customer)",
+      "company": "Company"
+    },
+    "submitting": "Thank you for the details. I am submitting your request now...",
+    "success": "Your request has been successfully received. One of our representatives will contact you shortly!",
+    "error": "I'm sorry, there was a problem submitting your request.",
+    "retry": "Try Again"
   }
 }

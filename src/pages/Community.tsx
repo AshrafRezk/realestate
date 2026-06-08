@@ -5,30 +5,33 @@ import {
   Container,
   Typography,
   Button,
-  Card,
-  CardContent,
   Tabs,
   Tab,
   Badge,
   CircularProgress,
   Grid,
+  Avatar,
+  Paper,
 } from '@mui/material'
-import { Building2, Plus, FileText, User } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { alpha } from '@mui/material/styles'
+import { Building2, Plus, FileText, LayoutDashboard, MessageSquare } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
-import UnitCard from '../components/search/UnitCard'
+import DashboardUnitCard from '../components/community/DashboardUnitCard'
 import CaseForm from '../components/community/CaseForm'
 import CaseList from '../components/community/CaseList'
 import { useAuthStore } from '../lib/store'
-import { getMyUnits, getCases } from '../lib/api-client'
+import { getMyOpportunities, getCases, type MyOpportunity } from '../lib/api-client'
 import { Unit, Case } from '../lib/types'
-import LanguageToggle from '../components/ui/LanguageToggle'
+import { DEMO_CONFIG } from '../lib/demo-config'
 
 export default function Community() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
-  const { user, token } = useAuthStore()
+  const isRtl = i18n.language === 'ar'
+  const { user } = useAuthStore()
   const [units, setUnits] = useState<Unit[]>([])
+  const [opportunities, setOpportunities] = useState<MyOpportunity[]>([])
   const [cases, setCases] = useState<Case[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'units' | 'cases'>('units')
@@ -43,13 +46,12 @@ export default function Community() {
     async function loadData() {
       setIsLoading(true)
       try {
-        const [unitsRes, casesRes] = await Promise.all([
-          getMyUnits(token || undefined),
-          getCases(token || undefined),
-        ])
+        const [oppRes, casesRes] = await Promise.all([getMyOpportunities(), getCases()])
 
-        if (unitsRes.success && unitsRes.data) {
-          setUnits(unitsRes.data)
+        if (oppRes.success && oppRes.data) {
+          setOpportunities(oppRes.data)
+          console.log('oppRes.data', oppRes.data)
+          setUnits(oppRes.data.flatMap((o) => o.units || []))
         }
         if (casesRes.success && casesRes.data) {
           setCases(casesRes.data)
@@ -62,200 +64,278 @@ export default function Community() {
     }
 
     loadData()
-  }, [user, token, navigate])
+  }, [user, navigate])
 
   const refreshCases = async () => {
-    const casesRes = await getCases(token || undefined)
+    const casesRes = await getCases()
     if (casesRes.success && casesRes.data) {
       setCases(casesRes.data)
     }
   }
 
-  if (!user) {
-    return null
-  }
+  if (!user) return null
 
   const activeCasesCount = cases.filter((c) => c.status === 'New' || c.status === 'InProgress').length
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-      {/* Header */}
-      <Box sx={{ bgcolor: 'primary.main', color: 'white', px: { xs: 2, md: 3 }, py: 4 }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'transparent' }}>
+      {/* Premium Header Section */}
+      <Box 
+        sx={(theme) => ({ 
+          bgcolor: alpha(theme.palette.primary.main, 0.8), 
+          backdropFilter: 'blur(20px)',
+          color: 'white', 
+          pt: 6, 
+          pb: 12,
+          position: 'relative',
+          overflow: 'hidden'
+        })}
+      >
+        {/* Background Decorative Element */}
+        <Box 
+          sx={{ 
+            position: 'absolute', 
+            top: -20, 
+            [isRtl ? 'left' : 'right']: -20, 
+            opacity: 0.1,
+            pointerEvents: 'none'
+          }}
+        >
+          <Building2 size={300} />
+        </Box>
+
         <Container maxWidth="lg">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
           >
-            <Box
-              component="img"
-              src="/RiymarLogo-White.png"
-              alt={t('home.title')}
-              sx={{
-                height: 40,
-                width: 'auto',
-                mb: 3,
-              }}
-            />
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
-              <Box
-                sx={{
-                  width: 48,
-                  height: 48,
-                  bgcolor: 'rgba(255,255,255,0.1)',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+              <Avatar 
+                sx={{ 
+                  width: 80, 
+                  height: 80, 
+                  bgcolor: 'rgba(255,255,255,0.1)', 
+                  mb: 2,
+                  border: '2px solid rgba(255,255,255,0.2)'
                 }}
               >
-                <User size={24} />
-              </Box>
-              <Box>
-                <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)' }}>
-                  {t('community.welcome')}
-                </Typography>
-                <Typography variant="h6" fontWeight="bold">
-                  {user.firstName} {user.lastName}
-                </Typography>
-              </Box>
-            </Box>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.8)', maxWidth: '600px' }}>
-                {t('community.welcomeMessage')}
+                <LayoutDashboard size={40} />
+              </Avatar>
+              <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)', mb: 0.5 }}>
+                {t('community.welcome')}
               </Typography>
-              <LanguageToggle sx={{ color: 'white' }} />
+              <Typography variant="h4" fontWeight="bold">
+                {user.firstName} {user.lastName}
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)', mt: 1 }}>
+                {t('community.welcomeMessage', { companyName: DEMO_CONFIG.brand.nameAr })}
+              </Typography>
             </Box>
           </motion.div>
         </Container>
       </Box>
 
-      {/* Stats */}
-      <Container maxWidth="lg" sx={{ mt: -2 }}>
-        <Grid container spacing={2}>
+      {/* Stats Cards - Overlapping */}
+      <Container maxWidth="md" sx={{ mt: -6, mb: 6, position: 'relative', zIndex: 10 }}>
+        <Grid container spacing={3}>
           <Grid size={{ xs: 6 }}>
-            <Card>
-              <CardContent sx={{ textAlign: 'center', py: 2 }}>
-                <Building2 size={24} color="#1a365d" style={{ margin: '0 auto 8px', display: 'block' }} />
-                <Typography variant="h4" fontWeight="bold">
-                  {units.length}
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  {t('community.unitsCount')}
-                </Typography>
-              </CardContent>
-            </Card>
+            <Paper 
+              elevation={0}
+              sx={{ 
+                p: 3, 
+                borderRadius: 4, 
+                textAlign: 'center',
+                border: '1px solid',
+                borderColor: 'divider',
+                boxShadow: '0 10px 15px -3px rgba(0,0,0,0.05)'
+              }}
+            >
+              <FileText size={32} color="#1a365d" style={{ margin: '0 auto 12px' }} />
+              <Typography variant="h3" fontWeight="800" color="primary.main">
+                {cases.length}
+              </Typography>
+              <Typography variant="body2" color="text.secondary" fontWeight="medium">
+                {t('community.casesCount')}
+              </Typography>
+            </Paper>
           </Grid>
           <Grid size={{ xs: 6 }}>
-            <Card>
-              <CardContent sx={{ textAlign: 'center', py: 2 }}>
-                <FileText size={24} color="#1a365d" style={{ margin: '0 auto 8px', display: 'block' }} />
-                <Typography variant="h4" fontWeight="bold">
-                  {cases.length}
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  {t('community.casesCount')}
-                </Typography>
-              </CardContent>
-            </Card>
+            <Paper 
+              elevation={0}
+              sx={{ 
+                p: 3, 
+                borderRadius: 4, 
+                textAlign: 'center',
+                border: '1px solid',
+                borderColor: 'divider',
+                boxShadow: '0 10px 15px -3px rgba(0,0,0,0.05)'
+              }}
+            >
+              <Building2 size={32} color="#1a365d" style={{ margin: '0 auto 12px' }} />
+              <Typography variant="h3" fontWeight="800" color="primary.main">
+                {units.length}
+              </Typography>
+              <Typography variant="body2" color="text.secondary" fontWeight="medium">
+                {t('community.unitsCount')}
+              </Typography>
+            </Paper>
           </Grid>
         </Grid>
       </Container>
 
-      {/* Tabs */}
-      <Container maxWidth="lg" sx={{ mt: 3 }}>
-        <Tabs
-          value={activeTab}
-          onChange={(_, newValue) => setActiveTab(newValue)}
-          sx={{
-            bgcolor: 'grey.50',
-            borderRadius: 2,
-            p: 0.5,
-            '& .MuiTabs-indicator': { display: 'none' },
-          }}
-        >
-          <Tab
-            value="units"
-            label={t('community.myUnits')}
-            sx={{
-              flex: 1,
-              borderRadius: 1,
-              '&.Mui-selected': {
-                bgcolor: 'background.paper',
-                boxShadow: 1,
-              },
+      {/* Main Content Sections */}
+      <Container maxWidth="lg" sx={{ pb: 10 }}>
+        {/* Custom Styled Tabs */}
+        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
+          <Paper 
+            elevation={0}
+            sx={{ 
+              p: 0.5, 
+              borderRadius: 3, 
+              bgcolor: 'rgba(0,0,0,0.03)',
+              display: 'inline-flex',
             }}
-          />
-          <Tab
-            value="cases"
-            label={
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                {t('community.myCases')}
-                {activeCasesCount > 0 && (
-                  <Badge badgeContent={activeCasesCount} color="warning" />
-                )}
-              </Box>
-            }
-            sx={{
-              flex: 1,
-              borderRadius: 1,
-              '&.Mui-selected': {
-                bgcolor: 'background.paper',
-                boxShadow: 1,
-              },
-            }}
-          />
-        </Tabs>
-      </Container>
+          >
+            <Tabs
+              value={activeTab}
+              onChange={(_, v) => setActiveTab(v)}
+              sx={{
+                '& .MuiTabs-indicator': { display: 'none' },
+              }}
+            >
+              <Tab 
+                value="units" 
+                label={t('community.myUnits')}
+                sx={{ 
+                  minWidth: 160,
+                  borderRadius: 2.5,
+                  fontWeight: 'bold',
+                  '&.Mui-selected': { bgcolor: 'white', color: 'primary.main', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }
+                }} 
+              />
+              <Tab 
+                value="cases" 
+                label={
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    {t('community.myCases')}
+                    {activeCasesCount > 0 && <Badge badgeContent={activeCasesCount} color="error" sx={{ '& .MuiBadge-badge': { fontSize: 10, height: 16, minWidth: 16 } }} />}
+                  </Box>
+                }
+                sx={{ 
+                  minWidth: 160,
+                  borderRadius: 2.5,
+                  fontWeight: 'bold',
+                  '&.Mui-selected': { bgcolor: 'white', color: 'primary.main', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }
+                }} 
+              />
+            </Tabs>
+          </Paper>
+        </Box>
 
-      {/* Content */}
-      <Container maxWidth="lg" sx={{ py: 3 }}>
-        {isLoading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
-            <CircularProgress />
-          </Box>
-        ) : activeTab === 'units' ? (
-          <Box>
-            {units.length === 0 ? (
-              <Box sx={{ textAlign: 'center', py: 8 }}>
-                <Building2 size={48} color="#e2e8f0" style={{ margin: '0 auto 12px', display: 'block' }} />
-                <Typography variant="h6" fontWeight="semibold" gutterBottom>
-                  {t('community.noUnits')}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                  {t('community.noUnitsDescription')}
-                </Typography>
-                <Button component={Link} to="/search" variant="contained">
-                  {t('community.exploreUnits')}
+        <AnimatePresence mode="wait">
+          {isLoading ? (
+            <motion.div
+              key="loader"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
+                <CircularProgress size={40} thickness={4} />
+              </Box>
+            </motion.div>
+          ) : activeTab === 'units' ? (
+            <motion.div
+              key="units"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+            >
+              {opportunities.length === 0 ? (
+                <Paper sx={{ p: 8, textAlign: 'center', borderRadius: 4, bgcolor: 'transparent', border: '2px dashed', borderColor: 'divider' }} elevation={0}>
+                  <Building2 size={64} color="#CBD5E1" style={{ margin: '0 auto 20px' }} />
+                  <Typography variant="h6" fontWeight="bold">{t('community.noUnits')}</Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>{t('community.noUnitsDescription')}</Typography>
+                  <Button component={Link} to="/demo/search" variant="contained" size="large">{t('community.exploreUnits')}</Button>
+                </Paper>
+              ) : (
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  {opportunities.map((opp) => (
+                    <Box key={opp.id}>
+                      <Paper
+                        elevation={0}
+                        sx={{
+                          p: 2.5,
+                          borderRadius: 3,
+                          bgcolor: 'white',
+                          border: '1px solid',
+                          borderColor: 'divider',
+                          mb: 2,
+                        }}
+                      >
+                        <Typography fontWeight={800} color="primary.main">
+                          {opp.name || t('community.myUnits')}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {(opp.stageName || '').trim()}
+                        </Typography>
+                      </Paper>
+
+                      <Grid container spacing={4}>
+                        {(opp.units || []).map((unit) => (
+                          <Grid size={{ xs: 12, md: 6 }} key={unit.id}>
+                            <DashboardUnitCard unit={unit} />
+                          </Grid>
+                        ))}
+                      </Grid>
+                    </Box>
+                  ))}
+                </Box>
+              )}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="cases"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Box sx={{ display: 'flex', justifyContent: 'flex-start', mb: 3 }}>
+                <Button 
+                  variant="contained" 
+                  onClick={() => setIsCaseFormOpen(true)}
+                  startIcon={<Plus size={18} />}
+                  sx={{ 
+                    bgcolor: 'primary.main', 
+                    px: 4, 
+                    py: 1.5, 
+                    borderRadius: 2,
+                    fontWeight: 'bold',
+                    boxShadow: '0 4px 12px rgba(26, 54, 93, 0.25)' 
+                  }}
+                >
+                  {t('community.newRequest')}
                 </Button>
               </Box>
-            ) : (
-              <Grid container spacing={2}>
-                {units.map((unit) => (
-                  <Grid size={{ xs: 12, sm: 6 }} key={unit.id}>
-                    <UnitCard unit={unit} />
-                  </Grid>
-                ))}
-              </Grid>
-            )}
-          </Box>
-        ) : (
-          <Box>
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-              <Button
-                variant="contained"
-                size="small"
-                startIcon={<Plus size={16} />}
-                onClick={() => setIsCaseFormOpen(true)}
-              >
-                {t('community.newCase')}
-              </Button>
-            </Box>
-            <CaseList cases={cases} />
-          </Box>
-        )}
+
+              {cases.length === 0 ? (
+                <Paper sx={{ p: 8, textAlign: 'center', borderRadius: 4, bgcolor: 'white', border: '1px solid', borderColor: 'divider' }} elevation={0}>
+                  <MessageSquare size={64} color="#CBD5E1" style={{ margin: '0 auto 20px' }} />
+                  <Typography variant="h6" fontWeight="bold">{t('community.noRequests')}</Typography>
+                  <Typography variant="body2" color="text.secondary">{t('community.noRequestsDescription')}</Typography>
+                </Paper>
+              ) : (
+                <CaseList cases={cases} />
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </Container>
 
-      {/* Case Form Modal */}
+      {/* Request Modal */}
       <CaseForm
         isOpen={isCaseFormOpen}
         onClose={() => setIsCaseFormOpen(false)}
@@ -265,4 +345,3 @@ export default function Community() {
     </Box>
   )
 }
-

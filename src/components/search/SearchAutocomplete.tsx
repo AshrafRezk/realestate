@@ -3,6 +3,7 @@ import { Autocomplete, TextField, Box, Typography, Chip, IconButton } from '@mui
 import { Search, X, Clock } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useToastStore } from '../../lib/store/toast-store'
+import { DEMO_CONFIG } from '../../lib/demo-config'
 
 interface SearchSuggestion {
   id: string
@@ -32,7 +33,7 @@ export default function SearchAutocomplete({ onSelect, placeholder }: SearchAuto
 
   useEffect(() => {
     // Load recent searches from localStorage
-    const stored = localStorage.getItem('binsaedan-recent-searches')
+    const stored = localStorage.getItem(`${DEMO_CONFIG.localStoragePrefix}-recent-searches`)
     if (stored) {
       try {
         setRecentSearches(JSON.parse(stored))
@@ -54,14 +55,14 @@ export default function SearchAutocomplete({ onSelect, placeholder }: SearchAuto
     setRecentSearches((prev) => {
       const filtered = prev.filter((s) => s.label.toLowerCase() !== search.toLowerCase())
       const updated = [newRecent, ...filtered].slice(0, 5) // Keep last 5
-      localStorage.setItem('binsaedan-recent-searches', JSON.stringify(updated))
+      localStorage.setItem(`${DEMO_CONFIG.localStoragePrefix}-recent-searches`, JSON.stringify(updated))
       return updated
     })
   }
 
   const clearRecentSearches = () => {
     setRecentSearches([])
-    localStorage.removeItem('binsaedan-recent-searches')
+    localStorage.removeItem(`${DEMO_CONFIG.localStoragePrefix}-recent-searches`)
     addToast(t('search.autocomplete.clearedRecent'), 'success')
   }
 

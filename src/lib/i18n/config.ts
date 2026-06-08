@@ -16,8 +16,8 @@ i18n
         translation: enTranslations,
       },
     },
-    fallbackLng: 'ar',
-    lng: 'ar', // Default to Arabic
+    fallbackLng: 'en',
+    lng: 'en', // Default to English
     interpolation: {
       escapeValue: false,
     },
@@ -29,7 +29,7 @@ i18n
   })
   .then(() => {
     // Update HTML lang and dir attributes on initialization
-    const lang = i18n.language || 'ar'
+    const lang = i18n.language || 'en'
     document.documentElement.lang = lang
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr'
   })

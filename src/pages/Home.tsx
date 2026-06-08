@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react'
-import { Box, Container, Typography, Button, Grid } from '@mui/material'
-import { Construction, LocationOn, Handshake } from '@mui/icons-material'
-import { Phone, Mail, MapPin } from 'lucide-react'
+import { Box, Container, Typography, Button } from '@mui/material'
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import HeroSection from '../components/home/HeroSection'
-import ProjectsGrid from '../components/home/ProjectsGrid'
+import FeaturedListings from '../components/home/FeaturedListings'
+import InspiringSpacesSection from '../components/home/InspiringSpacesSection'
+import StatsSection from '../components/home/StatsSection'
+import OurFieldsSection from '../components/home/OurFieldsSection'
+import AboutProjectsSection from '../components/home/AboutProjectsSection'
 import RegisterInterestModal from '../components/home/RegisterInterestModal'
+import MorphicBackground from '../components/home/MorphicBackground'
 
 export default function Home() {
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false)
@@ -19,99 +22,17 @@ export default function Home() {
   }, [i18n.language])
 
   return (
-    <>
+    <Box sx={{ position: 'relative', overflowX: 'hidden' }}>
+      <MorphicBackground />
       <HeroSection />
-      <ProjectsGrid />
-
-      {/* Why Choose Us Section */}
-      <Box sx={{ py: 8, px: { xs: 2, md: 3 }, bgcolor: 'grey.50' }}>
-        <Container maxWidth="xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <Box sx={{ textAlign: 'center', mb: 6 }}>
-              <Typography
-                variant="overline"
-                sx={{
-                  color: 'secondary.main',
-                  fontWeight: 500,
-                  mb: 1,
-                  display: 'block',
-                }}
-              >
-                {t('home.whyChooseUs')}
-              </Typography>
-              <Typography variant="h3" fontWeight="bold" gutterBottom>
-                {t('home.legacyTitle')}
-              </Typography>
-              <Typography variant="body1" color="text.secondary" sx={{ maxWidth: '36rem', mx: 'auto' }}>
-                {t('home.legacyDescription')}
-              </Typography>
-            </Box>
-
-            <Grid container spacing={4}>
-              {[
-                {
-                  title: t('home.qualityTitle'),
-                  description: t('home.qualityDescription'),
-                  icon: Construction,
-                },
-                {
-                  title: t('home.locationTitle'),
-                  description: t('home.locationDescription'),
-                  icon: LocationOn,
-                },
-                {
-                  title: t('home.serviceTitle'),
-                  description: t('home.serviceDescription'),
-                  icon: Handshake,
-                },
-              ].map((item, index) => {
-                const IconComponent = item.icon
-                return (
-                  <Grid size={{ xs: 12, md: 4 }} key={item.title}>
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: index * 0.1 }}
-                    >
-                      <Box sx={{ textAlign: 'center', p: 3 }}>
-                        <Box
-                          sx={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            width: 80,
-                            height: 80,
-                            borderRadius: '50%',
-                            bgcolor: 'primary.main',
-                            color: 'white',
-                            mb: 2,
-                          }}
-                        >
-                          <IconComponent sx={{ fontSize: 40 }} />
-                        </Box>
-                        <Typography variant="h6" fontWeight="semibold" gutterBottom>
-                          {item.title}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {item.description}
-                        </Typography>
-                      </Box>
-                    </motion.div>
-                  </Grid>
-                )
-              })}
-            </Grid>
-          </motion.div>
-        </Container>
-      </Box>
+      <FeaturedListings />
+      <InspiringSpacesSection />
+      <StatsSection />
+      <OurFieldsSection />
+      <AboutProjectsSection />
 
       {/* CTA Section */}
-      <Box sx={{ py: 8, px: { xs: 2, md: 3 }, bgcolor: 'primary.main', color: 'white' }}>
+      <Box sx={(theme) => ({ py: 8, px: { xs: 2, md: 3 }, bgcolor: theme.palette.primary.main, color: 'white' })}>
         <Container maxWidth="lg" sx={{ textAlign: 'center' }}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -125,65 +46,29 @@ export default function Home() {
               {t('home.ctaDescription')}
             </Typography>
             <Button
-              variant="contained"
-              color="secondary"
+              variant="outlined"
               size="large"
               onClick={() => setIsRegisterModalOpen(true)}
+              sx={{
+                px: { xs: 2.25, sm: 2.75 },
+                py: { xs: 1, sm: 1.125 },
+                gap: 0.5,
+                borderRadius: 1.5,
+                borderWidth: 1.5,
+                fontWeight: 500,
+                borderColor: 'rgba(255, 255, 255, 0.75)',
+                color: 'white',
+                bgcolor: 'rgba(255, 255, 255, 0.06)',
+                '&:hover': {
+                  borderWidth: 1.5,
+                  borderColor: 'white',
+                  bgcolor: 'rgba(255, 255, 255, 0.12)',
+                },
+              }}
             >
               {t('home.registerInterest')}
             </Button>
           </motion.div>
-        </Container>
-      </Box>
-
-      {/* Contact Info */}
-      <Box sx={{ py: 6, px: { xs: 2, md: 3 } }}>
-        <Container maxWidth="lg">
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 4 }}>
-            <Box
-              component="a"
-              href="tel:+966112345678"
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1.5,
-                color: 'text.secondary',
-                textDecoration: 'none',
-                '&:hover': { color: 'primary.main' },
-              }}
-            >
-              <Phone size={20} />
-              <Typography variant="body2" dir="ltr">
-                {t('home.phone')}
-              </Typography>
-            </Box>
-            <Box
-              component="a"
-              href={`mailto:${t('home.email')}`}
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1.5,
-                color: 'text.secondary',
-                textDecoration: 'none',
-                '&:hover': { color: 'primary.main' },
-              }}
-            >
-              <Mail size={20} />
-              <Typography variant="body2">{t('home.email')}</Typography>
-            </Box>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1.5,
-                color: 'text.secondary',
-              }}
-            >
-              <MapPin size={20} />
-              <Typography variant="body2">{t('home.address')}</Typography>
-            </Box>
-          </Box>
         </Container>
       </Box>
 
@@ -192,7 +77,7 @@ export default function Home() {
         isOpen={isRegisterModalOpen}
         onClose={() => setIsRegisterModalOpen(false)}
       />
-    </>
+    </Box>
   )
 }
 

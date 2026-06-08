@@ -20,6 +20,7 @@ import { X, Trash2 } from 'lucide-react'
 import { Unit } from '../../lib/types'
 import UnitCard from '../search/UnitCard'
 import ShareButton from '../ui/ShareButton'
+import CurrencyIcon from '../ui/CurrencyIcon'
 
 interface UnitComparisonProps {
   units: Unit[]
@@ -30,11 +31,16 @@ interface UnitComparisonProps {
 
 export default function UnitComparison({ units, isOpen, onClose, onRemove }: UnitComparisonProps) {
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('ar-SA', {
-      style: 'currency',
-      currency: 'SAR',
+    const formatted = new Intl.NumberFormat('ar-SA', {
+      style: 'decimal',
       maximumFractionDigits: 0,
     }).format(price)
+    return (
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        {formatted}
+        <CurrencyIcon theme="light" className="mx-1" />
+      </Box>
+    )
   }
 
   const comparisonFields = [

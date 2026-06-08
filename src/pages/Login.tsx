@@ -12,6 +12,7 @@ import {
   IconButton,
   Alert,
 } from '@mui/material'
+import { alpha } from '@mui/material/styles'
 import { Eye, EyeOff, ArrowRight, ArrowLeft } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -20,6 +21,10 @@ import { useTranslation } from 'react-i18next'
 import { login } from '../lib/api-client'
 import { useAuthStore } from '../lib/store'
 import LanguageToggle from '../components/ui/LanguageToggle'
+import SiteContactBar from '../components/layout/SiteContactBar'
+import Footer from '../components/layout/Footer'
+import BrandLogo from '../components/layout/BrandLogo'
+import AnimatedBackground from '../components/layout/AnimatedBackground'
 
 export default function Login() {
   const { t, i18n } = useTranslation()
@@ -51,7 +56,7 @@ export default function Login() {
       const response = await login(data.username, data.password)
 
       if (response.success && response.data) {
-        setAuth(response.data.user, response.data.token)
+        setAuth(response.data.user, null)
         navigate('/community')
       } else {
         setError(response.error || t('login.errorGeneric'))
@@ -66,9 +71,10 @@ export default function Login() {
   const isRtl = i18n.language === 'ar'
 
   return (
-    <Box sx={{ minHeight: '100dvh', bgcolor: 'background.default', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ minHeight: '100dvh', bgcolor: 'transparent', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+      <AnimatedBackground />
       <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Link to="/demo" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: 'inherit' }}>
+        <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: 'inherit' }}>
           {isRtl ? <ArrowRight size={20} /> : <ArrowLeft size={20} />}
           <Typography variant="body2" color="text.secondary">
             {t('login.backToHome')}
@@ -80,17 +86,9 @@ export default function Login() {
       <Container maxWidth="sm" sx={{ flex: 1, display: 'flex', alignItems: 'center', py: 4 }}>
         <Box sx={{ width: '100%' }}>
           <Box sx={{ textAlign: 'center', mb: 4 }}>
-            <Box
-              component="img"
-              src="/RiymarLogo.png"
-              alt={t('home.title')}
-              sx={{
-                height: 64,
-                width: 'auto',
-                mx: 'auto',
-                mb: 2,
-              }}
-            />
+            <Box sx={{ mb: 2 }}>
+              <BrandLogo variant="login" />
+            </Box>
             <Typography variant="h4" fontWeight="bold" gutterBottom>
               {t('login.title')}
             </Typography>
@@ -99,7 +97,14 @@ export default function Login() {
             </Typography>
           </Box>
 
-          <Card>
+          <Card
+            sx={(theme) => ({
+              backgroundColor: alpha(theme.palette.background.paper, 0.6),
+              backdropFilter: 'blur(16px)',
+              border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.05)',
+            })}
+          >
             <CardContent sx={{ p: 3 }}>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <TextField
@@ -153,6 +158,9 @@ export default function Login() {
           </Typography>
         </Box>
       </Container>
+
+      <SiteContactBar />
+      <Footer />
     </Box>
   )
 }
