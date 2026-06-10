@@ -280,7 +280,7 @@ export default function HeroSection() {
               display: 'flex',
               flexDirection: { xs: 'column', sm: 'row' },
               gap: 2,
-              bgcolor: 'rgba(255, 255, 255, 0.92)',
+              bgcolor: 'rgba(10, 22, 40, 0.7)',
               backdropFilter: 'blur(12px)',
               p: { xs: 2, sm: 3 },
               maxWidth: 700,
@@ -299,11 +299,11 @@ export default function HeroSection() {
                 input: {
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Search size={20} color="#003527" />
+                      <Search size={20} color="#0a1628" />
                     </InputAdornment>
                   ),
                   disableUnderline: true,
-                  sx: { px: 1, py: 1.5, fontSize: '1rem', color: '#191c1e' },
+                  sx: { px: 1, py: 1.5, fontSize: '1rem', color: '#d7e3f9' },
                 },
               }}
               sx={{ '& .MuiInputBase-root': { bgcolor: 'transparent', borderRadius: { xs: 3, md: 4 } } }}
@@ -312,13 +312,13 @@ export default function HeroSection() {
               type="submit"
               variant="contained"
               sx={{
-                bgcolor: '#d4af37',
-                color: '#003527',
+                bgcolor: '#e6c364',
+                color: '#0a1628',
                 px: 5,
                 py: 1.5,
                 whiteSpace: 'nowrap',
                 borderRadius: { xs: 3, md: 4 },
-                '&:hover': { bgcolor: '#e9c349' },
+                '&:hover': { bgcolor: '#ffe08f' },
               }}
             >
               EXPLORE NOW

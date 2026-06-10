@@ -4,8 +4,8 @@
   "description": "اكتشف أرقى المشاريع العقارية",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#fafafa",
-  "theme_color": "#1a365d",
+  "background_color": "#071423",
+  "theme_color": "#071423",
   "orientation": "portrait-primary",
   "icons": [
     {

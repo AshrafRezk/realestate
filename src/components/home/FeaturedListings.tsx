@@ -37,7 +37,7 @@ export default function FeaturedListings() {
   }, [])
 
   return (
-    <Box sx={{ bgcolor: '#eef4f0', py: { xs: 8, md: 12 } }}>
+    <Box sx={{ bgcolor: '#0a1628', py: { xs: 8, md: 12 } }}>
       <Container maxWidth="lg">
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', mb: { xs: 6, md: 8 } }}>
           <Typography variant="h2">
@@ -46,11 +46,11 @@ export default function FeaturedListings() {
           <Button
             onClick={() => navigate('/search')}
             sx={{
-              fontFamily: '"Inter", sans-serif',
+              fontFamily: '"Hanken Grotesk", sans-serif',
               fontSize: 12,
               letterSpacing: '0.1em',
               fontWeight: 600,
-              color: '#003527',
+              color: '#0a1628',
               '&:hover': { opacity: 0.7, bgcolor: 'transparent' },
               display: { xs: 'none', sm: 'inline-flex' },
               gap: 1,
@@ -119,14 +119,14 @@ export default function FeaturedListings() {
                         position: 'absolute',
                         top: 16,
                         left: 16,
-                        bgcolor: '#ffffff',
+                        bgcolor: '#2a3546',
                         px: 2,
                         py: 0.5,
-                        fontFamily: '"Inter", sans-serif',
+                        fontFamily: '"Hanken Grotesk", sans-serif',
                         fontSize: 10,
                         letterSpacing: '0.1em',
                         fontWeight: 600,
-                        color: '#191c1e',
+                        color: '#d7e3f9',
                       }}
                     >
                       FEATURED
@@ -135,11 +135,11 @@ export default function FeaturedListings() {
                   <Box sx={{ p: { xs: 4, md: 5 } }}>
                     <Typography
                       sx={{
-                        fontFamily: '"Inter", sans-serif',
+                        fontFamily: '"Hanken Grotesk", sans-serif',
                         fontSize: 12,
                         letterSpacing: '0.1em',
                         fontWeight: 600,
-                        color: '#003527',
+                        color: '#0a1628',
                         mb: 1,
                         textTransform: 'uppercase',
                       }}
@@ -164,21 +164,21 @@ export default function FeaturedListings() {
                       }}
                     >
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Typography sx={{ fontFamily: '"Inter", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600, color: '#5b677b' }}>
+                        <Typography sx={{ fontFamily: '"Hanken Grotesk", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600, color: '#c5c6cd' }}>
                           {unit.bedrooms || '—'} BEDS
                         </Typography>
                       </Box>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Typography sx={{ fontFamily: '"Inter", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600, color: '#5b677b' }}>
+                        <Typography sx={{ fontFamily: '"Hanken Grotesk", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600, color: '#c5c6cd' }}>
                           {unit.area ? `${Math.round(unit.area).toLocaleString()} SQFT` : '—'}
                         </Typography>
                       </Box>
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Typography variant="h4" sx={{ color: '#003527' }}>
+                      <Typography variant="h4" sx={{ color: '#0a1628' }}>
                         {formatPrice(unit.price)}
                       </Typography>
-                      <Typography sx={{ color: '#003527', fontSize: 24, transition: 'transform 0.3s', '&:hover': { transform: 'translateX(4px)' } }}>
+                      <Typography sx={{ color: '#0a1628', fontSize: 24, transition: 'transform 0.3s', '&:hover': { transform: 'translateX(4px)' } }}>
                         →
                       </Typography>
                     </Box>

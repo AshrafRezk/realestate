@@ -11,10 +11,10 @@ function StatCard({ value, label, suffix = '' }: { value: number; label: string;
     <Box sx={{ textAlign: 'center' }}>
       <Typography
         sx={{
-          fontFamily: '"EB Garamond", serif',
+          fontFamily: '"Hanken Grotesk", sans-serif',
           fontSize: { xs: 48, md: 56 },
           fontWeight: 500,
-          color: '#003527',
+          color: '#0a1628',
           lineHeight: 1,
         }}
       >
@@ -22,10 +22,10 @@ function StatCard({ value, label, suffix = '' }: { value: number; label: string;
         <Typography
           component="span"
           sx={{
-            fontFamily: '"EB Garamond", serif',
+            fontFamily: '"Hanken Grotesk", sans-serif',
             fontSize: { xs: 28, md: 36 },
             fontWeight: 400,
-            color: '#d4af37',
+            color: '#e6c364',
             ml: 0.5,
           }}
         >
@@ -34,11 +34,11 @@ function StatCard({ value, label, suffix = '' }: { value: number; label: string;
       </Typography>
       <Typography
         sx={{
-          fontFamily: '"Inter", sans-serif',
+          fontFamily: '"Hanken Grotesk", sans-serif',
           fontSize: 12,
           letterSpacing: '0.1em',
           fontWeight: 600,
-          color: '#5b677b',
+          color: '#c5c6cd',
           textTransform: 'uppercase',
           mt: 1.5,
         }}
@@ -82,7 +82,7 @@ export default function Achievements() {
   return (
     <Box>
       {/* Hero */}
-      <Box sx={{ bgcolor: '#003527', py: { xs: 10, md: 14 }, textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+      <Box sx={{ bgcolor: '#0a1628', py: { xs: 5, md: 5 }, textAlign: 'center', position: 'relative', overflow: 'hidden', mb: 0 }}>
         <Container maxWidth="md">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <Box
@@ -91,13 +91,14 @@ export default function Achievements() {
                 alignItems: 'center',
                 px: 3,
                 py: 1,
-                fontFamily: '"Inter", sans-serif',
+                fontFamily: '"Hanken Grotesk", sans-serif',
                 fontSize: 12,
                 letterSpacing: '0.1em',
                 fontWeight: 600,
-                color: '#d4af37',
+                color: '#e6c364',
                 textTransform: 'uppercase',
                 mb: 3,
+                mt: 0,
               }}
             >
               {i18n.language.startsWith('ar') ? 'إنجازاتنا' : 'Our Achievements'}
@@ -119,11 +120,12 @@ export default function Achievements() {
       </Box>
 
       {/* Stats Counters */}
-      <Container maxWidth="lg" sx={{ mt: -6, pb: { xs: 6, md: 8 } }}>
+      <Container maxWidth="lg" sx={{ mt: -2, pb: { xs: 6, md: 8 } }}>
         <Box
           sx={{
             bgcolor: '#ffffff',
-            boxShadow: '0 20px 50px -20px rgba(0,53,39,0.25)',
+            boxShadow: '0 20px 50px -20px rgba(10,22,40,0.25)',
+            borderRadius: '12px',
             p: { xs: 4, md: 6 },
           }}
         >
@@ -150,21 +152,21 @@ export default function Achievements() {
           <Box sx={{ textAlign: 'center', mb: { xs: 6, md: 8 } }}>
             <Typography
               sx={{
-                fontFamily: '"Inter", sans-serif',
+                fontFamily: '"Hanken Grotesk", sans-serif',
                 fontSize: 12,
                 letterSpacing: '0.1em',
                 fontWeight: 600,
-                color: '#d4af37',
+                color: '#e6c364',
                 textTransform: 'uppercase',
                 mb: 1.5,
               }}
             >
               {t('ach.snapshot.kicker')}
             </Typography>
-            <Typography variant="h2" sx={{ mb: 2 }}>
+            <Typography variant="h2" sx={{ mb: 2, color: '#abafd1' }}>
               {t('ach.snapshot.title')}
             </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 640, mx: 'auto', fontSize: 17, lineHeight: 1.7 }}>
+            <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 640, mx: 'auto', fontSize: 17, lineHeight: 1.7 ,color: '#abafd1'}}>
               {t('ach.snapshot.subtitle', { companyName: DEMO_CONFIG.brand.name })}
             </Typography>
           </Box>
@@ -178,8 +180,9 @@ export default function Achievements() {
                 <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.1 }}>
                   <Box
                     sx={{
-                      bgcolor: '#ffffff',
-                      border: '1px solid rgba(0,53,39,0.06)',
+                      bgcolor: '#2a3546',
+                      border: '1px solid rgba(10,22,40,0.06)',
+                      borderRadius: '12px',
                       p: { xs: 4, md: 5 },
                       transition: 'all 0.4s',
                       '&:hover': { transform: 'translateY(-4px)', boxShadow: '0 20px 40px rgba(30,41,59,0.04)' },
@@ -192,11 +195,11 @@ export default function Achievements() {
                         height: 56,
                         alignItems: 'center',
                         justifyContent: 'center',
-                        bgcolor: '#003527',
+                        bgcolor: '#0a1628',
                         color: '#ffffff',
                         mb: 3,
                         transition: 'all 0.4s',
-                        '&:hover': { bgcolor: '#d4af37', color: '#003527' },
+                        '&:hover': { bgcolor: '#e6c364', color: '#0a1628' },
                       }}
                     >
                       <Icon size={24} />
@@ -225,8 +228,8 @@ export default function Achievements() {
                     sx={{
                       display: 'flex',
                       gap: 3,
-                      bgcolor: '#ffffff',
-                      border: '1px solid rgba(0,53,39,0.06)',
+                      bgcolor: '#2a3546',
+                      border: '1px solid rgba(10,22,40,0.06)',
                       p: { xs: 3, md: 4 },
                       transition: 'all 0.3s',
                       '&:hover': { boxShadow: '0 8px 24px rgba(30,41,59,0.04)' },
@@ -239,8 +242,8 @@ export default function Achievements() {
                         height: 44,
                         alignItems: 'center',
                         justifyContent: 'center',
-                        bgcolor: 'rgba(212,175,55,0.1)',
-                        color: '#d4af37',
+                        bgcolor: 'rgba(230,195,100,0.1)',
+                        color: '#e6c364',
                         flexShrink: 0,
                       }}
                     >
@@ -263,17 +266,17 @@ export default function Achievements() {
       </Container>
 
       {/* Awards */}
-      <Box sx={{ bgcolor: '#eef4f0', py: { xs: 8, md: 12 } }}>
+      <Box sx={{ bgcolor: '#0a1628', py: { xs: 8, md: 12 } }}>
         <Container maxWidth="lg">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
-            <Box sx={{ textAlign: 'center', mb: { xs: 6, md: 8 } }}>
+          <Box sx={{ textAlign: 'center', mb: { xs: 6, md: 8 }, bgcolor: '#0a1628', borderRadius: '8px', p: { xs: 4, md: 6 } }}>
               <Typography
                 sx={{
-                  fontFamily: '"Inter", sans-serif',
+                  fontFamily: '"Hanken Grotesk", sans-serif',
                   fontSize: 12,
                   letterSpacing: '0.1em',
                   fontWeight: 600,
-                  color: '#d4af37',
+                  color: '#e6c364',
                   textTransform: 'uppercase',
                   mb: 1.5,
                 }}
@@ -294,8 +297,8 @@ export default function Achievements() {
                   <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.08 }}>
                     <Box
                       sx={{
-                        bgcolor: '#ffffff',
-                        border: '1px solid rgba(0,53,39,0.06)',
+                        bgcolor: '#2a3546',
+                        border: '1px solid rgba(10,22,40,0.06)',
                         p: { xs: 4, md: 5 },
                         transition: 'all 0.4s',
                         '&:hover': { transform: 'translateY(-4px)', boxShadow: '0 20px 40px rgba(30,41,59,0.04)' },
@@ -308,11 +311,11 @@ export default function Achievements() {
                           height: 52,
                           alignItems: 'center',
                           justifyContent: 'center',
-                          bgcolor: '#003527',
+                          bgcolor: '#0a1628',
                           color: '#ffffff',
                           mb: 3,
                           transition: 'all 0.4s',
-                          '&:hover': { bgcolor: '#d4af37', color: '#003527' },
+                          '&:hover': { bgcolor: '#e6c364', color: '#0a1628' },
                         }}
                       >
                         <Icon size={22} />
@@ -346,14 +349,14 @@ export default function Achievements() {
               <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.1 }}>
                 <Box
                   sx={{
-                    bgcolor: '#ffffff',
-                    border: '1px solid rgba(0,53,39,0.06)',
+                    bgcolor: '#2a3546',
+                    border: '1px solid rgba(10,22,40,0.06)',
                     p: { xs: 4, md: 5 },
                     transition: 'all 0.3s',
                     '&:hover': { boxShadow: '0 8px 24px rgba(30,41,59,0.04)' },
                   }}
                 >
-                  <Quote size={28} color="#d4af37" style={{ opacity: 0.6 }} />
+                  <Quote size={28} color="#e6c364" style={{ opacity: 0.6 }} />
                   <Typography
                     variant="body1"
                     sx={{ mt: 3, mb: 4, lineHeight: 1.7, fontStyle: 'italic', color: 'text.secondary' }}
@@ -362,16 +365,16 @@ export default function Achievements() {
                   </Typography>
                   <Box sx={{ display: 'flex', gap: 0.5, mb: 2 }}>
                     {Array.from({ length: 5 }).map((_, k) => (
-                      <Star key={k} size={16} color="#d4af37" fill="#d4af37" />
+                      <Star key={k} size={16} color="#e6c364" fill="#e6c364" />
                     ))}
                   </Box>
                   <Typography
                     sx={{
-                      fontFamily: '"Inter", sans-serif',
+                      fontFamily: '"Hanken Grotesk", sans-serif',
                       fontSize: 12,
                       letterSpacing: '0.1em',
                       fontWeight: 600,
-                      color: '#003527',
+                      color: '#0a1628',
                       textTransform: 'uppercase',
                     }}
                   >

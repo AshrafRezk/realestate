@@ -42,7 +42,7 @@ export default function Header() {
       position="absolute"
       elevation={0}
       sx={{
-        backgroundColor: 'rgba(0,53,39,0.5)',
+        backgroundColor: 'rgba(10,22,40,0.7)',
         backdropFilter: 'blur(12px)',
         boxShadow: 'none',
       }}
@@ -115,7 +115,7 @@ export default function Header() {
               sx: {
                 mt: 1,
                 minWidth: 150,
-                bgcolor: 'rgba(255, 255, 255, 0.95)',
+                bgcolor: 'rgba(10, 22, 40, 0.95)',
                 backdropFilter: 'blur(16px)',
                 boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
               }
@@ -128,12 +128,12 @@ export default function Header() {
                 to={item.path}
                 onClick={() => setMoreMenuAnchor(null)}
                 sx={{
-                  color: '#191c1e',
+                  color: '#d7e3f9',
                   fontWeight: 500,
                   fontSize: '0.875rem',
                   py: 1.5,
                   ...(isNavPathActive(location.pathname, item.path) && {
-                    bgcolor: 'rgba(0,53,39,0.06)',
+                    bgcolor: 'rgba(230,195,100,0.08)',
                     fontWeight: 700,
                   })
                 }}

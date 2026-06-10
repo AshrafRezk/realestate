@@ -6,12 +6,12 @@ export const DEMO_CONFIG = {
     taglineAr: 'شريكك الموثوق في العقارات',
     taglineEn: 'Your Trusted Real Estate Partner',
     logo: {
-      dark: '/brand/logo-dark.png',
-      white: '/brand/logo-white.png',
-      vertical: '/brand/logo-vertical.png',
-      icon: '/brand/logo-icon.svg',
+      dark: '/brand/RiymarLogo.png',
+      white: '/brand/RiymarLogo.png',
+      vertical: '/brand/RiymarLogo.png',
+      icon: '/brand/RiymarLogo.png',
       favicon: '/brand/favicon.ico',
-      appIcon: '/brand/appicon.png',
+      appIcon: '/brand/RiymarLogo.png',
     },
   },
   contact: {

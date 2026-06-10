@@ -102,7 +102,7 @@ export default function UnitCard({ unit, index = 0, variant = 'grid' }: UnitCard
           display: 'flex',
           flexDirection: 'column',
           textDecoration: 'none',
-          bgcolor: '#ffffff',
+          bgcolor: '#2a3546',
           borderRadius: { xs: 3, md: 4 },
           boxShadow: '0 20px 40px rgba(30,41,59,0.04)',
           transition: 'transform 0.3s, box-shadow 0.3s',
@@ -133,14 +133,14 @@ export default function UnitCard({ unit, index = 0, variant = 'grid' }: UnitCard
                 position: 'absolute',
                 top: 12,
                 left: 12,
-                bgcolor: '#ffffff',
+                bgcolor: '#2a3546',
                 px: 2,
                 py: 0.5,
-                fontFamily: '"Inter", sans-serif',
+                fontFamily: '"Hanken Grotesk", sans-serif',
                 fontSize: 10,
                 letterSpacing: '0.1em',
                 fontWeight: 600,
-                color: '#191c1e',
+                color: '#d7e3f9',
               }}
             >
               FEATURED
@@ -158,11 +158,11 @@ export default function UnitCard({ unit, index = 0, variant = 'grid' }: UnitCard
         <Box sx={{ p: { xs: 4, md: 5 } }}>
           <Typography
             sx={{
-              fontFamily: '"Inter", sans-serif',
+              fontFamily: '"Hanken Grotesk", sans-serif',
               fontSize: 12,
               letterSpacing: '0.1em',
               fontWeight: 600,
-              color: '#003527',
+              color: '#0a1628',
               mb: 1,
               textTransform: 'uppercase',
             }}
@@ -186,18 +186,18 @@ export default function UnitCard({ unit, index = 0, variant = 'grid' }: UnitCard
               mb: 3,
             }}
           >
-            <Typography sx={{ fontFamily: '"Inter", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600, color: '#5b677b' }}>
+            <Typography sx={{ fontFamily: '"Hanken Grotesk", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600, color: '#c5c6cd' }}>
               {unit.bedrooms} BEDS
             </Typography>
-            <Typography sx={{ fontFamily: '"Inter", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600, color: '#5b677b' }}>
+            <Typography sx={{ fontFamily: '"Hanken Grotesk", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600, color: '#c5c6cd' }}>
               {unit.area ? `${Math.round(unit.area).toLocaleString()} SQFT` : '—'}
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="h4" sx={{ color: '#003527', fontFamily: '"Playfair Display", serif', fontWeight: 500 }}>
+            <Typography variant="h4" sx={{ color: '#0a1628', fontFamily: '"Hanken Grotesk", sans-serif', fontWeight: 500 }}>
               <CurrencyIcon theme="light" />{formatPrice(unit.price)}
             </Typography>
-            <Typography sx={{ color: '#003527', fontSize: 24, transition: 'transform 0.3s', '.MuiCard-root:hover &': { transform: 'translateX(4px)' } }}>
+            <Typography sx={{ color: '#0a1628', fontSize: 24, transition: 'transform 0.3s', '.MuiCard-root:hover &': { transform: 'translateX(4px)' } }}>
               →
             </Typography>
           </Box>

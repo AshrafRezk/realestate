@@ -60,13 +60,13 @@ export default function Favorites() {
   }
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#f7f9fb' }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: '#071423' }}>
       {/* Top Bar */}
-      <Box sx={{ bgcolor: '#ffffff', borderBottom: '1px solid rgba(0,53,39,0.1)' }}>
+      <Box sx={{ bgcolor: '#2a3546', borderBottom: '1px solid rgba(0,53,39,0.1)' }}>
         <Container maxWidth="lg" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', py: 1.5 }}>
           <Button
             onClick={() => navigate(-1)}
-            sx={{ color: '#003527', fontFamily: '"Inter", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600 }}
+            sx={{ color: '#0a1628', fontFamily: '"Hanken Grotesk", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600 }}
           >
             ← {i18n.language === 'ar' ? 'رجوع' : 'BACK'}
           </Button>
@@ -89,7 +89,7 @@ export default function Favorites() {
         {units.length === 0 ? (
           /* Empty State */
           <Box sx={{ py: 16, textAlign: 'center' }}>
-            <Typography sx={{ fontFamily: '"Inter", sans-serif', color: '#bfc9c3', fontSize: 64, mb: 4 }}>
+            <Typography sx={{ fontFamily: '"Hanken Grotesk", sans-serif', color: '#45474c', fontSize: 64, mb: 4 }}>
               favorite_border
             </Typography>
             <Typography variant="h4" sx={{ mb: 1 }}>
@@ -104,15 +104,15 @@ export default function Favorites() {
               variant="contained"
               onClick={() => navigate('/search')}
               sx={{
-                bgcolor: '#003527',
+                bgcolor: '#0a1628',
                 color: '#ffffff',
                 px: 8,
                 py: 2,
-                fontFamily: '"Inter", sans-serif',
+                fontFamily: '"Hanken Grotesk", sans-serif',
                 fontSize: 12,
                 letterSpacing: '0.1em',
                 fontWeight: 600,
-                '&:hover': { bgcolor: '#064e3b' },
+                '&:hover': { bgcolor: '#1f2b3b' },
               }}
             >
               {i18n.language === 'ar' ? 'استكشاف العقارات' : 'EXPLORE LISTINGS'}
@@ -131,7 +131,7 @@ export default function Favorites() {
                   sx={{
                     display: 'flex',
                     flexDirection: { xs: 'column', md: 'row' },
-                    bgcolor: '#ffffff',
+                    bgcolor: '#2a3546',
                     border: '1px solid rgba(0,53,39,0.06)',
                     overflow: 'hidden',
                     transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
@@ -153,7 +153,7 @@ export default function Favorites() {
                     <Box>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                         <Box>
-                          <Typography sx={{ fontFamily: '"Inter", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600, color: '#003527', mb: 1, textTransform: 'uppercase' }}>
+                          <Typography sx={{ fontFamily: '"Hanken Grotesk", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600, color: '#0a1628', mb: 1, textTransform: 'uppercase' }}>
                             {unit.projectName || 'Luxury Property'}
                           </Typography>
                           <Typography variant="h4" sx={{ mb: 0.5 }}>
@@ -167,23 +167,23 @@ export default function Favorites() {
                           onClick={() => removeFavorite(unit.id)}
                           sx={{
                             p: 1,
-                            color: '#5b677b',
+                            color: '#c5c6cd',
                             cursor: 'pointer',
                             opacity: { xs: 1, md: 0 },
                             transition: 'opacity 0.3s',
-                            '&:hover': { color: '#ba1a1a' },
+                            '&:hover': { color: '#ffb4ab' },
                             '.MuiCard-root:hover &, &:hover': { opacity: 1 },
                           }}
                           title="Remove from saved"
                         >
-                          <Typography sx={{ fontFamily: '"Inter", sans-serif' }}>close</Typography>
+                          <Typography sx={{ fontFamily: '"Hanken Grotesk", sans-serif' }}>close</Typography>
                         </Box>
                       </Box>
                     </Box>
                     <Box sx={{ mt: { xs: 3, md: 4 }, display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { md: 'flex-end' }, justifyContent: 'space-between', gap: 3 }}>
                       <Box sx={{ display: 'flex', gap: { xs: 4, md: 6 } }}>
                         <Box>
-                          <Typography sx={{ fontFamily: '"Inter", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600, color: '#707974', textTransform: 'uppercase', mb: 0.5 }}>
+                          <Typography sx={{ fontFamily: '"Hanken Grotesk", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600, color: '#c5c6cd', textTransform: 'uppercase', mb: 0.5 }}>
                             {i18n.language === 'ar' ? 'المساحة' : 'Area'}
                           </Typography>
                           <Typography variant="h6">
@@ -191,7 +191,7 @@ export default function Favorites() {
                           </Typography>
                         </Box>
                         <Box>
-                          <Typography sx={{ fontFamily: '"Inter", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600, color: '#707974', textTransform: 'uppercase', mb: 0.5 }}>
+                          <Typography sx={{ fontFamily: '"Hanken Grotesk", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600, color: '#c5c6cd', textTransform: 'uppercase', mb: 0.5 }}>
                             {i18n.language === 'ar' ? 'الغرف' : 'Rooms'}
                           </Typography>
                           <Typography variant="h6">
@@ -200,10 +200,10 @@ export default function Favorites() {
                         </Box>
                       </Box>
                       <Box>
-                        <Typography sx={{ fontFamily: '"Inter", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600, color: '#003527', textTransform: 'uppercase', mb: 0.5 }}>
+                        <Typography sx={{ fontFamily: '"Hanken Grotesk", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600, color: '#0a1628', textTransform: 'uppercase', mb: 0.5 }}>
                           {i18n.language === 'ar' ? 'السعر' : 'Offered At'}
                         </Typography>
-                        <Typography variant="h4" sx={{ color: '#003527' }}>
+                        <Typography variant="h4" sx={{ color: '#0a1628' }}>
                           <CurrencyIcon theme="light" />{formatPrice(unit.price)}
                         </Typography>
                       </Box>

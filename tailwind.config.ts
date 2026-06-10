@@ -5,9 +5,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"PP Telegraf"', 'system-ui', 'sans-serif'],
-        display: ['"PP Telegraf"', 'system-ui', 'sans-serif'],
-        arabic: ['"PP Neue Montreal Arabic"', 'system-ui', 'sans-serif'],
+        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+        display: ['"Hanken Grotesk"', 'system-ui', 'sans-serif'],
+        arabic: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
       },
       colors: {
         primary: 'hsl(var(--primary))',
@@ -48,4 +48,3 @@ export default {
   },
   plugins: [],
 } satisfies Config
-

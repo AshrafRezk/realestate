@@ -46,37 +46,37 @@ export default function SiteContactBar() {
   const socialLinks = [
     {
       icon: Instagram,
-      href: 'https://www.instagram.com/cloudastick/',
+      href: DEMO_CONFIG.social.instagram,
       label: t('share.instagram'),
       color: '#E4405F',
     },
     {
       icon: XIcon,
-      href: 'https://x.com/cloudastick',
+      href: DEMO_CONFIG.social.twitter,
       label: t('share.twitter'),
       color: '#000000',
     },
     {
       icon: Linkedin,
-      href: 'https://www.linkedin.com/company/cloudastick/',
+      href: DEMO_CONFIG.social.linkedin,
       label: t('share.linkedin'),
       color: '#0077B5',
     },
     {
       icon: WhatsAppIcon,
-      href: 'https://wa.me/201005298308',
+      href: DEMO_CONFIG.contact.whatsappUrl,
       label: t('share.whatsapp'),
       color: '#25D366',
     },
     {
       icon: Facebook,
-      href: 'https://www.facebook.com/cloudastick',
+      href: DEMO_CONFIG.social.facebook,
       label: t('share.facebook'),
       color: '#1877F2',
     },
     {
       icon: TikTokIcon,
-      href: 'https://www.tiktok.com/@cloudastick?_r=1&_t=ZS-96vTh4SGSuI',
+      href: DEMO_CONFIG.social.tiktok,
       label: t('share.tiktok'),
       color: '#000000',
     },

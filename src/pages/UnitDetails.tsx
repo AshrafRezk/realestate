@@ -128,12 +128,12 @@ export default function UnitDetails() {
   const secondaryImages = unit.images?.slice(1, 3) || []
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#f7f9fb' }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: '#071423' }}>
       {/* Top Bar */}
       <Box
         sx={{
-          bgcolor: '#003527',
-          borderBottom: '1px solid rgba(212,175,55,0.2)',
+          bgcolor: '#0a1628',
+          borderBottom: '1px solid rgba(230,195,100,0.2)',
           position: 'sticky',
           top: 0,
           zIndex: 50,
@@ -143,7 +143,7 @@ export default function UnitDetails() {
           <Button
             startIcon={<ArrowRight />}
             onClick={() => navigate(-1)}
-            sx={{ color: '#d4af37', fontFamily: '"Inter", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600 }}
+            sx={{ color: '#e6c364', fontFamily: '"Hanken Grotesk", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600 }}
           >
             {i18n.language === 'ar' ? 'رجوع' : 'BACK'}
           </Button>
@@ -186,10 +186,10 @@ export default function UnitDetails() {
                 bgcolor: 'rgba(0,53,39,0.1)',
                 backdropFilter: 'blur(20px)',
                 p: 3,
-                border: '1px solid rgba(212,175,55,0.3)',
+                border: '1px solid rgba(230,195,100,0.3)',
               }}
             >
-              <Typography sx={{ color: '#d4af37', fontFamily: '"Inter", sans-serif', fontSize: 14, letterSpacing: '0.1em', fontWeight: 600, textTransform: 'uppercase' }}>
+              <Typography sx={{ color: '#e6c364', fontFamily: '"Hanken Grotesk", sans-serif', fontSize: 14, letterSpacing: '0.1em', fontWeight: 600, textTransform: 'uppercase' }}>
                 {unit.projectName || 'Luxury Property'}
               </Typography>
             </Box>
@@ -222,8 +222,8 @@ export default function UnitDetails() {
               ))
             ) : (
               <>
-                <Box sx={{ bgcolor: '#e0e3e5' }} />
-                <Box sx={{ bgcolor: '#e0e3e5' }} />
+                <Box sx={{ bgcolor: '#2a3546' }} />
+                <Box sx={{ bgcolor: '#2a3546' }} />
               </>
             )}
           </Box>
@@ -233,9 +233,9 @@ export default function UnitDetails() {
       {/* Pricing & Stats Bar */}
       <Box
         sx={{
-          bgcolor: '#003527',
-          borderTop: '1px solid rgba(212,175,55,0.2)',
-          borderBottom: '1px solid rgba(212,175,55,0.2)',
+          bgcolor: '#0a1628',
+          borderTop: '1px solid rgba(230,195,100,0.2)',
+          borderBottom: '1px solid rgba(230,195,100,0.2)',
           position: 'sticky',
           top: 56,
           zIndex: 40,
@@ -255,51 +255,51 @@ export default function UnitDetails() {
           }}
         >
           <Box>
-            <Typography sx={{ color: 'rgba(212,175,55,0.7)', fontFamily: '"Inter", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 500, textTransform: 'uppercase' }}>
+            <Typography sx={{ color: 'rgba(230,195,100,0.7)', fontFamily: '"Hanken Grotesk", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 500, textTransform: 'uppercase' }}>
               {i18n.language === 'ar' ? 'القيمة الاستثمارية' : 'Investment Value'}
             </Typography>
-            <Typography sx={{ color: '#d4af37', fontFamily: '"EB Garamond", serif', fontSize: { xs: 28, md: 36 }, fontWeight: 500 }}>
+            <Typography sx={{ color: '#e6c364', fontFamily: '"Hanken Grotesk", sans-serif', fontSize: { xs: 28, md: 36 }, fontWeight: 500 }}>
               {formatPrice(unit.price)}
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', gap: { xs: 3, md: 5 }, overflowX: 'auto', pb: 0.5 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <Typography sx={{ fontFamily: '"Inter", sans-serif', color: '#d4af37', fontSize: { xs: 24, md: 32 }, fontWeight: 300 }}>
+              <Typography sx={{ fontFamily: '"Hanken Grotesk", sans-serif', color: '#e6c364', fontSize: { xs: 24, md: 32 }, fontWeight: 300 }}>
                 <span className="material-symbols-outlined" style={{ fontSize: 'inherit' }}>bed</span>
               </Typography>
               <Box>
-                <Typography sx={{ color: '#ffffff', fontFamily: '"EB Garamond", serif', fontSize: { xs: 20, md: 28 }, fontWeight: 500, lineHeight: 1 }}>
+                <Typography sx={{ color: '#ffffff', fontFamily: '"Hanken Grotesk", sans-serif', fontSize: { xs: 20, md: 28 }, fontWeight: 500, lineHeight: 1 }}>
                   {String(unit.bedrooms).padStart(2, '0')}
                 </Typography>
-                <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontFamily: '"Inter", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 500, textTransform: 'uppercase' }}>
+                <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontFamily: '"Hanken Grotesk", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 500, textTransform: 'uppercase' }}>
                   {i18n.language === 'ar' ? 'غرف نوم' : 'Bedrooms'}
                 </Typography>
               </Box>
             </Box>
             {unit.bathrooms && (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Typography sx={{ fontFamily: '"Inter", sans-serif', color: '#d4af37', fontSize: { xs: 24, md: 32 }, fontWeight: 300 }}>
+                <Typography sx={{ fontFamily: '"Hanken Grotesk", sans-serif', color: '#e6c364', fontSize: { xs: 24, md: 32 }, fontWeight: 300 }}>
                   <span className="material-symbols-outlined" style={{ fontSize: 'inherit' }}>bathtub</span>
                 </Typography>
                 <Box>
-                  <Typography sx={{ color: '#ffffff', fontFamily: '"EB Garamond", serif', fontSize: { xs: 20, md: 28 }, fontWeight: 500, lineHeight: 1 }}>
+                  <Typography sx={{ color: '#ffffff', fontFamily: '"Hanken Grotesk", sans-serif', fontSize: { xs: 20, md: 28 }, fontWeight: 500, lineHeight: 1 }}>
                     {String(unit.bathrooms).padStart(2, '0')}
                   </Typography>
-                  <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontFamily: '"Inter", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 500, textTransform: 'uppercase' }}>
+                  <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontFamily: '"Hanken Grotesk", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 500, textTransform: 'uppercase' }}>
                     {i18n.language === 'ar' ? 'حمامات' : 'Bathrooms'}
                   </Typography>
                 </Box>
               </Box>
             )}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <Typography sx={{ fontFamily: '"Inter", sans-serif', color: '#d4af37', fontSize: { xs: 24, md: 32 }, fontWeight: 300 }}>
+              <Typography sx={{ fontFamily: '"Hanken Grotesk", sans-serif', color: '#e6c364', fontSize: { xs: 24, md: 32 }, fontWeight: 300 }}>
                 <span className="material-symbols-outlined" style={{ fontSize: 'inherit' }}>square_foot</span>
               </Typography>
               <Box>
-                <Typography sx={{ color: '#ffffff', fontFamily: '"EB Garamond", serif', fontSize: { xs: 20, md: 28 }, fontWeight: 500, lineHeight: 1 }}>
+                <Typography sx={{ color: '#ffffff', fontFamily: '"Hanken Grotesk", sans-serif', fontSize: { xs: 20, md: 28 }, fontWeight: 500, lineHeight: 1 }}>
                   {unit.area ? Math.round(unit.area).toLocaleString() : '—'}
                 </Typography>
-                <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontFamily: '"Inter", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 500, textTransform: 'uppercase' }}>
+                <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontFamily: '"Hanken Grotesk", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 500, textTransform: 'uppercase' }}>
                   {i18n.language === 'ar' ? 'مساحة' : 'Sq Ft'}
                 </Typography>
               </Box>
@@ -318,7 +318,7 @@ export default function UnitDetails() {
                 <Typography variant="h2" sx={{ mb: 2 }}>
                   {i18n.language === 'ar' ? 'نبذة عن العقار' : 'Property Overview'}
                 </Typography>
-                <Box sx={{ width: 96, height: 4, bgcolor: '#d4af37', mb: 3 }} />
+                <Box sx={{ width: 96, height: 4, bgcolor: '#e6c364', mb: 3 }} />
                 <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.8, fontSize: 18 }}>
                   {i18n.language === 'ar' ? unit.descriptionAr : unit.description || 'Experience luxury living at its finest in this exceptional property.'}
                 </Typography>
@@ -335,8 +335,8 @@ export default function UnitDetails() {
                       <Box
                         key={index}
                         sx={{
-                          bgcolor: '#eceef0',
-                          border: '1px solid rgba(212,175,55,0.1)',
+                          bgcolor: '#1f2b3b',
+                          border: '1px solid rgba(230,195,100,0.1)',
                           p: 4,
                           display: 'flex',
                           flexDirection: 'column',
@@ -345,11 +345,11 @@ export default function UnitDetails() {
                           textAlign: 'center',
                           gap: 1.5,
                           transition: 'all 0.3s',
-                          '&:hover': { bgcolor: '#003527', '& .amenity-label': { color: '#ffffff' }, '& .amenity-icon': { color: '#d4af37' } },
+                          '&:hover': { bgcolor: '#0a1628', '& .amenity-label': { color: '#ffffff' }, '& .amenity-icon': { color: '#e6c364' } },
                         }}
                       >
-                        <Check size={24} className="amenity-icon" style={{ color: '#003527', transition: 'color 0.3s' }} />
-                        <Typography className="amenity-label" sx={{ fontFamily: '"Inter", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600, textTransform: 'uppercase', transition: 'color 0.3s' }}>
+                        <Check size={24} className="amenity-icon" style={{ color: '#0a1628', transition: 'color 0.3s' }} />
+                        <Typography className="amenity-label" sx={{ fontFamily: '"Hanken Grotesk", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600, textTransform: 'uppercase', transition: 'color 0.3s' }}>
                           {amenity}
                         </Typography>
                       </Box>
@@ -438,11 +438,11 @@ export default function UnitDetails() {
           {/* Right Column — Sidebar Form */}
           <Box>
             <Box sx={{ position: 'sticky', top: 130 }}>
-              <Box sx={{ bgcolor: '#003527', p: { xs: 3, md: 4 }, border: '1px solid rgba(212,175,55,0.3)' }}>
-                <Typography sx={{ color: '#d4af37', fontFamily: '"EB Garamond", serif', fontSize: 24, fontWeight: 500, mb: 1 }}>
+              <Box sx={{ bgcolor: '#0a1628', p: { xs: 3, md: 4 }, border: '1px solid rgba(230,195,100,0.3)' }}>
+                <Typography sx={{ color: '#e6c364', fontFamily: '"Hanken Grotesk", sans-serif', fontSize: 24, fontWeight: 500, mb: 1 }}>
                   {i18n.language === 'ar' ? 'طلب محفظة استثمارية' : 'Request Private Portfolio'}
                 </Typography>
-                <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontFamily: '"Inter", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 500, textTransform: 'uppercase', mb: 3 }}>
+                <Typography sx={{ color: 'rgba(255,255,255,0.6)', fontFamily: '"Hanken Grotesk", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 500, textTransform: 'uppercase', mb: 3 }}>
                   {i18n.language === 'ar' ? 'استفسار سري للمستثمرين المعتمدين فقط' : 'Confidential inquiry for qualified investors only.'}
                 </Typography>
 
@@ -456,7 +456,7 @@ export default function UnitDetails() {
                         sx: { color: '#ffffff', px: 0, py: 1, fontSize: 14, '&::placeholder': { color: 'rgba(255,255,255,0.4)', opacity: 1 } },
                       },
                     }}
-                    sx={{ borderBottom: '1px solid rgba(255,255,255,0.2)', '&:focus-within': { borderBottomColor: '#d4af37' } }}
+                    sx={{ borderBottom: '1px solid rgba(255,255,255,0.2)', '&:focus-within': { borderBottomColor: '#e6c364' } }}
                   />
                   <TextField
                     placeholder={i18n.language === 'ar' ? 'البريد الإلكتروني...' : 'Email address...'}
@@ -467,14 +467,14 @@ export default function UnitDetails() {
                         sx: { color: '#ffffff', px: 0, py: 1, fontSize: 14, '&::placeholder': { color: 'rgba(255,255,255,0.4)', opacity: 1 } },
                       },
                     }}
-                    sx={{ borderBottom: '1px solid rgba(255,255,255,0.2)', '&:focus-within': { borderBottomColor: '#d4af37' } }}
+                    sx={{ borderBottom: '1px solid rgba(255,255,255,0.2)', '&:focus-within': { borderBottomColor: '#e6c364' } }}
                   />
                   <FormControl variant="standard" sx={{ borderBottom: '1px solid rgba(255,255,255,0.2)' }}>
                     <Select
                       defaultValue="Middle East & GCC"
                       disableUnderline
                       slotProps={{
-                        root: { sx: { color: '#ffffff', fontSize: 14, py: 1, '& .MuiSvgIcon-root': { color: '#d4af37' } } },
+                        root: { sx: { color: '#ffffff', fontSize: 14, py: 1, '& .MuiSvgIcon-root': { color: '#e6c364' } } },
                       }}
                     >
                       <MenuItem value="Middle East & GCC">Middle East & GCC</MenuItem>
@@ -486,16 +486,16 @@ export default function UnitDetails() {
 
                   <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
                     <Box
-                      sx={{ px: 3, py: 1, border: '1px solid rgba(212,175,55,0.3)', cursor: 'pointer', transition: 'all 0.2s', '&:hover': { bgcolor: '#d4af37', '& .type-label': { color: '#003527' } } }}
+                      sx={{ px: 3, py: 1, border: '1px solid rgba(230,195,100,0.3)', cursor: 'pointer', transition: 'all 0.2s', '&:hover': { bgcolor: '#e6c364', '& .type-label': { color: '#0a1628' } } }}
                     >
-                      <Typography className="type-label" sx={{ color: '#d4af37', fontFamily: '"Inter", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600, textTransform: 'uppercase', transition: 'color 0.2s' }}>
+                      <Typography className="type-label" sx={{ color: '#e6c364', fontFamily: '"Hanken Grotesk", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600, textTransform: 'uppercase', transition: 'color 0.2s' }}>
                         {i18n.language === 'ar' ? 'استثمار' : 'Investment'}
                       </Typography>
                     </Box>
                     <Box
-                      sx={{ px: 3, py: 1, border: '1px solid rgba(212,175,55,0.3)', cursor: 'pointer', transition: 'all 0.2s', '&:hover': { bgcolor: '#d4af37', '& .type-label': { color: '#003527' } } }}
+                      sx={{ px: 3, py: 1, border: '1px solid rgba(230,195,100,0.3)', cursor: 'pointer', transition: 'all 0.2s', '&:hover': { bgcolor: '#e6c364', '& .type-label': { color: '#0a1628' } } }}
                     >
-                      <Typography className="type-label" sx={{ color: '#d4af37', fontFamily: '"Inter", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600, textTransform: 'uppercase', transition: 'color 0.2s' }}>
+                      <Typography className="type-label" sx={{ color: '#e6c364', fontFamily: '"Hanken Grotesk", sans-serif', fontSize: 12, letterSpacing: '0.1em', fontWeight: 600, textTransform: 'uppercase', transition: 'color 0.2s' }}>
                         {i18n.language === 'ar' ? 'سكن' : 'Residence'}
                       </Typography>
                     </Box>
@@ -504,15 +504,15 @@ export default function UnitDetails() {
                   <Button
                     fullWidth
                     sx={{
-                      bgcolor: '#d4af37',
-                      color: '#003527',
-                      fontFamily: '"Inter", sans-serif',
+                      bgcolor: '#e6c364',
+                      color: '#0a1628',
+                      fontFamily: '"Hanken Grotesk", sans-serif',
                       fontSize: 14,
                       letterSpacing: '0.2em',
                       fontWeight: 600,
                       py: 2,
                       mt: 2,
-                      '&:hover': { bgcolor: '#e9c349' },
+                      '&:hover': { bgcolor: '#ffe08f' },
                     }}
                     onClick={() => setIsRegisterModalOpen(true)}
                   >
@@ -522,8 +522,8 @@ export default function UnitDetails() {
 
                 <Box sx={{ mt: 4, pt: 3, borderTop: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Typography sx={{ fontFamily: '"Inter", sans-serif', color: '#d4af37', fontSize: 16 }}>verified_user</Typography>
-                    <Typography sx={{ color: 'rgba(255,255,255,0.4)', fontFamily: '"Inter", sans-serif', fontSize: 10, letterSpacing: '0.1em', fontWeight: 500, textTransform: 'uppercase' }}>
+                    <Typography sx={{ fontFamily: '"Hanken Grotesk", sans-serif', color: '#e6c364', fontSize: 16 }}>verified_user</Typography>
+                    <Typography sx={{ color: 'rgba(255,255,255,0.4)', fontFamily: '"Hanken Grotesk", sans-serif', fontSize: 10, letterSpacing: '0.1em', fontWeight: 500, textTransform: 'uppercase' }}>
                       {i18n.language === 'ar' ? 'تشفير كامل' : 'End-to-End Encryption'}
                     </Typography>
                   </Box>
@@ -542,9 +542,9 @@ export default function UnitDetails() {
                     py: 1.5,
                     fontSize: '1rem',
                     fontWeight: 600,
-                    bgcolor: '#003527',
+                    bgcolor: '#0a1628',
                     color: '#ffffff',
-                    '&:hover': { bgcolor: '#064e3b' },
+                    '&:hover': { bgcolor: '#1f2b3b' },
                   }}
                 >
                   {unit.status === 'Sold' ? t('unit.sold') : t('unit.registerInterest')}
@@ -556,18 +556,18 @@ export default function UnitDetails() {
                     size="large"
                     fullWidth
                     onClick={() => setIsCalculatorOpen(true)}
-                    startIcon={<SakaniMathIcon color="#003527" />}
+                    startIcon={<SakaniMathIcon color="#0a1628" />}
                     sx={{
                       py: 1.5,
                       fontSize: '1rem',
                       fontWeight: 600,
                       borderColor: 'rgba(0,0,0,0.12)',
-                      color: '#003527',
+                      color: '#0a1628',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: 1.5,
-                      '&:hover': { bgcolor: 'rgba(0,53,39,0.04)', borderColor: '#003527' },
+                      '&:hover': { bgcolor: 'rgba(0,53,39,0.04)', borderColor: '#0a1628' },
                     }}
                   >
                     {i18n.language === 'ar' ? 'حاسبة التمويل العقاري' : 'Mortgage Calculator'}
